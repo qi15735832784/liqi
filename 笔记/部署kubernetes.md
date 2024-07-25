@@ -249,3 +249,150 @@ server = "https://docker.io"
  ~~~
 
 ![image-20240725163531447](https://gitee.com/xiaojinliaqi/img/raw/master/202407251635482.png)
+
+~~~shell
+修改好的仓库scp到另外两个节点
+[root@server01 ~]# scp /etc/yum.repos.d/kubernetes.repo server02:/etc/yum.repos.d/kubernetes.repo
+[root@server01 ~]# scp /etc/yum.repos.d/kubernetes.repo server03:/etc/yum.repos.d/kubernetes.repo
+~~~
+
+![image-20240725165157109](https://gitee.com/xiaojinliaqi/img/raw/master/202407251652201.png)
+
+~~~shell
+[root@server01 ~]# dnf makecache
+#查询版本
+[root@server01 ~]# dnf list --showduplicates kubelet
+[root@server01 ~]# dnf install -y kubelet-1.30.1 kubeadm-1.30.1 kubectl-1.30.1
+##软件解释
+Kubelet ：在集群中每个节点都启动
+Kubeadm：初始化集群
+Kubectl ：管理集群的客户端命令行工具
+#安装tab补齐（三台需要）
+[root@server01 ~]# vim .bashrc
+最后添加：
+source <(kubeadm completion bash)
+source <(kubectl completion bash)
+source <(crictl completion bash)
+[root@server01 ~]# source .bashrc
+#k8s操作容器的客户端
+[root@server01 ~]# crictl images
+~~~
+
+![image-20240725165300061](https://gitee.com/xiaojinliaqi/img/raw/master/202407251653090.png)
+
+~~~shell
+[root@server01 ~]# crictl config runtime-endpoint 
+添加：unix:///run/containerd/containerd.sock
+[root@server01 ~]# vim /etc/crictl.yaml 
+~~~
+
+![image-20240725165420009](https://gitee.com/xiaojinliaqi/img/raw/master/202407251654047.png)
+
+~~~shell
+复制到02，03里面
+[root@server01 ~]# scp /etc/crictl.yaml server02:/etc/crictl.yaml
+[root@server01 ~]# scp /etc/crictl.yaml server03:/etc/crictl.yaml
+#同步时间
+[root@server01 ~]# dnf install chrony -yq
+[root@server01 ~]# vim /etc/chrony.conf
+~~~
+
+![image-20240725165451385](https://gitee.com/xiaojinliaqi/img/raw/master/202407251654415.png)
+
+~~~shell
+[root@server01 ~]# scp /etc/chrony.conf server02:/etc/chrony.conf
+[root@server01 ~]# scp /etc/chrony.conf server03:/etc/chrony.conf
+[root@server01 ~]# systemctl daemon-reload
+[root@server01 ~]# systemctl restart chronyd.service 
+[root@server01 ~]# chronyc sources -n
+~~~
+
+![image-20240725165516307](https://gitee.com/xiaojinliaqi/img/raw/master/202407251655353.png)
+
+~~~shell
+#打印配置文件到init.yaml （只在主节点配置）
+[root@server01 ~]# kubeadm config print init-defaults > init.yaml
+[root@server01 ~]# vim init.yaml
+修改此下
+#advertiseAddress: 10.15.200.11
+#name: server01
+#imageRepository: registry.aliyuncs.com/google_containers
+#kubernetesVersion: 1.30.1
+~~~
+
+ ![image-20240725165558769](https://gitee.com/xiaojinliaqi/img/raw/master/202407251655802.png)
+
+~~~shell
+#三台节点先enable
+[root@server01 ~]# systemctl enable kubelet.service 
+[root@server02 ~]# systemctl enable kubelet.service 
+[root@server03 ~]# systemctl enable kubelet.service 
+#进行匹配
+[root@server01 ~]# kubeadm init --config=init.yaml
+root@server01 ~]# mkdir -p $HOME/.kube
+[root@server01 ~]# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+[root@server01 ~]# sudo chown $(id -u):$(id -g) $HOME/.kube/config
+[root@server01 ~]# export KUBECONFIG=/etc/kubernetes/admin.conf
+[root@server01 ~]# curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml -O
+~~~
+
+如果报错的话
+
+![image-20240725165750220](https://gitee.com/xiaojinliaqi/img/raw/master/202407251657253.png)
+
+~~~shell
+解决方法
+[root@server01 ~]# vim /etc/NetworkManager/system-connections/ens160.nmconnection
+~~~
+
+![image-20240725165828668](https://gitee.com/xiaojinliaqi/img/raw/master/202407251658703.png)
+
+~~~shell
+[root@server01 ~]# systemctl restart NetworkManager
+[root@server01 ~]# curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml -O
+~~~
+
+![image-20240725165856177](https://gitee.com/xiaojinliaqi/img/raw/master/202407251658206.png)
+
+~~~shell
+[root@server01 ~]# cat init.yaml | grep 96
+  serviceSubnet: 10.96.0.0/12
+[root@server01 ~]# vim calico.yaml
+输入/192回车就可以找到，然后修改
+~~~
+
+![image-20240725165915423](https://gitee.com/xiaojinliaqi/img/raw/master/202407251659447.png)
+
+~~~shell
+kubeadm join 10.15.200.11:6443 --token abcdef.0123456789abcdef \
+        --discovery-token-ca-cert-hash sha256:f4b49725f4bd5617af108bf0e46a9e5747516b8c0b902a02c64b76dfba3ebcc1
+[root@server02 ~]# kubeadm join 10.15.200.11:6443 --token abcdef.0123456789abcdef \
+        --discovery-token-ca-cert-hash sha256:f4b49725f4bd5617af108bf0e46a9e5747516b8c0b902a02c64b76dfba3ebcc1
+[root@server03 ~]# kubeadm join 10.15.200.11:6443 --token abcdef.0123456789abcdef \
+        --discovery-token-ca-cert-hash sha256:f4b49725f4bd5617af108bf0e46a9e5747516b8c0b902a02c64b76dfba3ebcc1
+~~~
+
+~~~shell
+#在主节点上确认控制面板是否加入节点
+[root@server01 ~]# kubectl get nodes
+[root@server01 ~]# kubectl get pod --namespace kube-system
+~~~
+
+![image-20240725170042255](C:/Users/%E6%9D%8E%E7%90%A6/AppData/Roaming/Typora/typora-user-images/image-20240725170042255.png)
+
+![image-20240725170117528](https://gitee.com/xiaojinliaqi/img/raw/master/202407251701567.png)
+
+~~~shell
+#处理日志文件
+[root@server01 ~]# vim /etc/rsyslog.d/01-blocklist.conf
+添加：
+if $msg contains "run-containerd-runc" and $msg contains "mount: Deactivated successfully." then {
+        stop
+}
+[root@server01 ~]# systemctl restart rsyslog.service 
+[root@server01 ~]# scp /etc/rsyslog.d/01-blocklist.conf server02:/etc/rsyslog.d/01-blocklist.conf
+[root@server01 ~]# scp /etc/rsyslog.d/01-blocklist.conf server03:/etc/rsyslog.d/01-blocklist.conf
+[root@server02 ~]# systemctl restart rsyslog.service
+[root@server03 ~]# systemctl restart rsyslog.service
+~~~
+
