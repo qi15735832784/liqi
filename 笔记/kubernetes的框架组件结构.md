@@ -101,7 +101,7 @@ kubectl delete pod box1 --force --grace-period 0
 kubectl exec -it pods/box1 -- /bin/sh
 ~~~
 
-kubectl插件（注意节点）查询污点
+# kubectl插件（注意节点）查询污点
 
 ~~~shell
 [root@server01 ~]# vim kubectl-hello

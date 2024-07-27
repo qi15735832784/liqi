@@ -90,7 +90,7 @@ NAME   READY   STATUS    RESTARTS      AGE     LABELS
 box    1/1     Running   1 (16h ago)   3d19h   app=as,rel=stable
 ~~~
 
-kubernetes插件（infopod）
+## kubernetes插件（infopod）
 
 ~~~shell
 [root@server01 ~]# vim /usr/local/sbin/kubectl-infopod
@@ -312,7 +312,7 @@ nginx-deployment-5cfdb9f7f7-zz8pc   10.110.225.75   server02   nginx:1.24
 
 # 标签的高级语法（污点）
 
-kubernetes插件(hello 查询污点)
+## kubernetes插件(hello 查询污点)
 
 ~~~shell
 [root@server01 ~]# vim kubectl-hello
