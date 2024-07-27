@@ -540,6 +540,8 @@ server03:
 
 # 标签的高级语法（亲和）
 
+![image-20240727203748302](https://gitee.com/xiaojinliaqi/img/raw/master/202407272037651.png)
+
 required：亲和的方式，required是强制，perferred 是相对亲和
 
 DuringScheduling：调度期间进行亲和
@@ -548,8 +550,110 @@ IgnoredDuringExecution：不影响已经调度的pod
 
  
 
-matchLabels： 单标签匹配
+matchLabels： 单标签语法匹配
 
-matchExpressions： 多标签匹配
+matchExpressions： 多标签语法匹配
 
-![image-20240727203748302](https://gitee.com/xiaojinliaqi/img/raw/master/202407272037651.png)
+~~~shell
+[root@server01 ~]# kubectl label nodes server02 gpu=true
+node/server02 labeled
+[root@server01 ~]# kubectl hello 
+The message show all nodes taints:
+server01:
+        node-role.kubernetes.io/control-plane=:NoSchedule
+server02:
+
+server03:
+
+[root@server01 ~]# kubectl get nodes --show-labels
+NAME       STATUS   ROLES           AGE     VERSION   LABELS
+server01   Ready    control-plane   4d22h   v1.30.1   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=server01,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node.kubernetes.io/exclude-from-external-load-balancers=
+server02   Ready    <none>          4d21h   v1.30.1   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,gpu=true,kubernetes.io/arch=amd64,kubernetes.io/hostname=server02,kubernetes.io/os=linux
+server03   Ready    <none>          4d21h   v1.30.1   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=server03,kubernetes.io/os=linux
+~~~
+
+把nginx强制亲和到节点02
+
+~~~shell
+[root@server01 ~]# vim nginx.yaml  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      affinity:                #亲和性配置的顶层字段
+        nodeAffinity:  #表明我们正在设置的是节点亲和性规则，这些规则会限制Pod能被调度到哪些节点上
+           requiredDuringSchedulingIgnoredDuringExecution:   #在调度时必须满足，但在运行时如果节点发生变化，这些规则就不再适用
+            nodeSelectorTerms:
+            - matchExpressions:   #包含了节点标签的匹配表达式
+              - key: gpu          #节点必须具有的标签的键    
+                operator: In      #这是用于比较的操作符，表示我们要检查节点标签的值是否在某个值集合中
+                values:
+                - "true"           #这是一个数组，包含了我们希望节点标签的值与之匹配的值集合，在这个例子中是"true"
+      tolerations:
+      - key: node.kubernetes.io/not-ready
+        operator: Exists
+        effect: NoExecute
+        tolerationSeconds: 30
+      - key: node.kubernetes.io/unreachable
+        operator: Exists
+        effect: NoExecute
+        tolerationSeconds: 30
+      containers:
+      - name: nginx
+        image: nginx:1.24
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+[root@server01 ~]# kubectl apply -f nginx.yaml 
+deployment.apps/nginx-deployment created
+[root@server01 ~]# kubectl infopod 
+NAME                                IP               NODE       IMAGE
+nginx-deployment-8669b56687-24nql   10.110.225.100   server02   nginx:1.24
+nginx-deployment-8669b56687-c26x4   10.110.225.99    server02   nginx:1.24
+nginx-deployment-8669b56687-kqbmm   10.110.225.97    server02   nginx:1.24
+nginx-deployment-8669b56687-r2sqs   10.110.225.95    server02   nginx:1.24
+nginx-deployment-8669b56687-r52sf   10.110.225.98    server02   nginx:1.24
+nginx-deployment-8669b56687-xhxhb   10.110.225.96    server02   nginx:1.24
+~~~
+
+现在希望节点数量增加
+
+用于将名为"nginx-deployment"的Kubernetes部署中的副本数量设置为10
+
+~~~shell
+[root@server01 ~]# kubectl scale deployment nginx-deployment --replicas 10
+[root@server01 ~]# kubectl infopod 
+NAME                                IP               NODE       IMAGE
+nginx-deployment-8669b56687-hgpl8   10.110.225.107   server02   nginx:1.24
+nginx-deployment-8669b56687-jqhzf   10.110.225.110   server02   nginx:1.24
+nginx-deployment-8669b56687-k5v4l   10.110.225.106   server02   nginx:1.24
+nginx-deployment-8669b56687-kzpkt   10.110.225.103   server02   nginx:1.24
+nginx-deployment-8669b56687-lgcjp   10.110.225.108   server02   nginx:1.24
+nginx-deployment-8669b56687-mmwng   10.110.225.101   server02   nginx:1.24
+nginx-deployment-8669b56687-nw5rk   10.110.225.104   server02   nginx:1.24
+nginx-deployment-8669b56687-sdqgs   10.110.225.102   server02   nginx:1.24
+nginx-deployment-8669b56687-skx7d   10.110.225.105   server02   nginx:1.24
+nginx-deployment-8669b56687-vjkhq   10.110.225.109   server02   nginx:1.24
+
+~~~
+
+最后删掉即可
+
+~~~shell
+[root@server01 ~]# kubectl delete -f nginx.yaml
+deployment.apps "nginx-deployment" deleted
+[root@server01 ~]# kubectl label nodes server02 gpu-
+node/server02 unlabeled
+[root@server01 ~]# kubectl infopod 
+~~~
+
