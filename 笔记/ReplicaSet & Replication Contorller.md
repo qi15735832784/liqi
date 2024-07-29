@@ -481,4 +481,3 @@ spec:
         imagePullPolicy: IfNotPresent
 [root@server01 ~]# kubectl apply  -f rs.yaml
 ~~~
-
