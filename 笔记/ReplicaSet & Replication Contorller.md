@@ -121,8 +121,6 @@ rc-test-shfjs   1/1     Running   0          6m10s   app=rcpod,env=prod
 pod "rc-test-d85ll" deleted
 ~~~
 
-
-
 ## 举例RS的
 
 ~~~shell
