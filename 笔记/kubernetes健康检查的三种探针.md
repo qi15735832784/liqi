@@ -31,16 +31,14 @@ Startup：慢启动保护器，允许探测失败N次
 
 ## 三种探针类型：
 
-Exec探针：执行进程的地方，容器的状态由进程的退出状态码决定
+1.Exec探针：执行进程的地方，容器的状态由进程的退出状态码决定
 
-HTTP GET探针：向容器发送HTTP GET请求，通过HTTP状态码判断容器进行状态是否就绪
+2.HTTP GET探针：向容器发送HTTP GET请求，通过HTTP状态码判断容器进行状态是否就绪
 	path：网站的路径
 	port：pod网站的端口号（不是 service 和 ingress ）
 	scheme：连接主机的方式，HTTP 和 HTTPS ，默认是 HTTP
 	@ httpHeaders：请求中自定义的 http 头部，http 头部信息允许重复
-			name: accep
-			value: myusergent
-TCP socket探针：打开一个TCP连接到容器的指定端口
+3.TCP socket探针：打开一个TCP连接到容器的指定端口
 
 ## 探针的最佳选择：
 
