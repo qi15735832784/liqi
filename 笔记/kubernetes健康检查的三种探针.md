@@ -891,12 +891,12 @@ daemonset.apps "cadvisor" deleted
 
 # 课后作业
 
-1 使用初始化容器创建 https 的证书和密钥, 使用 deployment 部署 nginx:latest 副本 3 个, 并且启动 https 的访问.
-2 使用 poststart, 创建 index.html 页面内容为: poststart good.
-3 使用 daemonset 部署 cadvisor 和 node-exporter 在所有的节点, 且不可被驱离.
-4 使用 deployment 部署 Prometheus 服务端 和 grafana 副本各 1 个
-在 node1 上. 
-5 访问 grafana 页面可以查看容器和主机状态.
+1. 使用初始化容器创建 https 的证书和密钥, 使用 deployment 部署 nginx:latest 副本 3 个, 并且启动 https 的访问.
+
+2. 使用 poststart, 创建 index.html 页面内容为: poststart good.
+3. 使用 daemonset 部署 cadvisor 和 node-exporter 在所有的节点, 且不可被驱离.
+4. 使用 deployment 部署 Prometheus 服务端 和 grafana 副本各 1 个
+5. 在 node1 上访问 grafana 页面可以查看容器和主机状态.
 
 
 
