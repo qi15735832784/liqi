@@ -37,9 +37,10 @@ Startup：慢启动保护器，允许探测失败N次
 
 ## 探针的最佳选择：
 
-Readinrss + Exec：重要的文件或者配置丢失，则禁止对外提供服务
-Liveness + TCP socket：表示如果服务没有启动或退出，则重启服务
-Startup + HTTP GET：表示客户端多久能访问
+1. Readinrss + Exec：重要的文件或者配置丢失，则禁止对外提供服务
+
+2. Liveness + TCP socket：表示如果服务没有启动或退出，则重启服务
+3. Startup + HTTP GET：表示客户端多久能访问
 
 ### Tips:
 
