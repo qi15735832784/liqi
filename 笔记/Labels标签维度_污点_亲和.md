@@ -20,6 +20,7 @@ NAME       STATUS   ROLES           AGE     VERSION   LABELS
 server01   Ready    control-plane   4d18h   v1.30.1   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=server01,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node.kubernetes.io/exclude-from-external-load-balancers=
 server02   Ready    <none>          4d17h   v1.30.1   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=server02,kubernetes.io/os=linux
 server03   Ready    <none>          4d17h   v1.30.1   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=server03,kubernetes.io/os=linux
+
 ```
 
 label：
