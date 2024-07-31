@@ -98,7 +98,6 @@ box    1/1     Running   1 (16h ago)   3d19h   app=as,rel=stable
 kubectl get pod -o custom-columns=NAME:.metadata.name,IP:.status.podIP,NODE:.spec.nodeName,IMAGE:.spec.containers[0].image
 或者
 #!/bin/bash
-
 show_usage() {
     echo "使用方法:"
     echo "  kubectl infopod                     # 查询当前namespace的pods"
@@ -120,14 +119,14 @@ query_pods() {
     # 检查是否是namespace
     if echo $namespaces | grep -w -q "$query"; then
         echo "在该namespace中的pod: $query"
-        kubectl get pod -n "$query" $watch_flag -o custom-columns=NAME:.metadata.name,IP:.status.podIP,NODE:.spec.nodeName,IMAGE:.spec.containers[0].image
+        kubectl get pod -n "$query" $watch_flag -o custom-columns=NAME:.metadata.name,IP:.status.podIP,STATUS:.status.phase,NODE:.spec.nodeName,IMAGE:.spec.containers[0].image
     else
         # 在所有namespace中查找匹配的pod
         local found=false
         for ns in $namespaces; do
             if kubectl get pod -n "$ns" "$query" &>/dev/null; then
                 echo "Pod found in namespace: $ns"
-                kubectl get pod -n "$ns" "$query" $watch_flag -o custom-columns=NAME:.metadata.name,IP:.status.podIP,NODE:.spec.nodeName,IMAGE:.spec.containers[0].image
+                kubectl get pod -n "$ns" "$query" $watch_flag -o custom-columns=NAME:.metadata.name,IP:.status.podIP,STATUS:.status.phase,NODE:.spec.nodeName,IMAGE:.spec.containers[0].image
                 found=true
                 break
             fi
@@ -154,7 +153,7 @@ done
 
 if [ ${#args[@]} -eq 0 ]; then
     # 无参数，查询当前namespace的pods
-    kubectl get pod $([[ "$watch_mode" = true ]] && echo "-w") -o custom-columns=NAME:.metadata.name,IP:.status.podIP,NODE:.spec.nodeName,IMAGE:.spec.containers[0].image
+    kubectl get pod $([[ "$watch_mode" = true ]] && echo "-w") -o custom-columns=NAME:.metadata.name,IP:.status.podIP,STATUS:.status.phase,NODE:.spec.nodeName,IMAGE:.spec.containers[0].image
 elif [ ${#args[@]} -eq 1 ]; then
     # 有一个参数，查询匹配的pod或namespace
     query_pods "${args[0]}" "$watch_mode"
@@ -163,6 +162,7 @@ else
     show_usage
     exit 1
 fi
+
 [root@server01 ~]# chmod +x /usr/local/sbin/kubectl-infopod
 [root@server01 ~]# chown root:root /usr/local/sbin/kubectl-infopod
 [root@server01 ~]# kubectl infopod
