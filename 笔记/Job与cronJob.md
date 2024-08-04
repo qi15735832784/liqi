@@ -718,3 +718,10 @@ web-9   1/1     Running   0          53s
 3、在namespace opstest中，使用Statefulset部署pod 1个运行mysql，访问nginx的service的clusterIP地址，可以打开index.php的测试页面，及mysql的链接测试。
 
 4、ingress-nginx安装正确
+
+[作业地址](https://gitee.com/zhaojiedong/work/blob/master/%E7%AC%94%E8%AE%B0/7_31%E4%BD%9C%E4%B8%9A.md 'https://gitee.com/zhaojiedong/work/blob/master/%E7%AC%94%E8%AE%B0/7_31%E4%BD%9C%E4%B8%9A.md')
+
+[第四题仓库](https://gitee.com/zhaojiedong/work/blob/master/%E7%AC%94%E8%AE%B0/%E5%AE%89%E8%A3%85%20Ingress.md 'https://gitee.com/zhaojiedong/work/blob/master/%E7%AC%94%E8%AE%B0/%E5%AE%89%E8%A3%85%20Ingress.md')
+
+
+
