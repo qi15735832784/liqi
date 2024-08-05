@@ -2,7 +2,7 @@
 
 
 
-config and secret  Tips:
+config and secret  Tips: 
 
 1. 引用的 key 必须存在
 2. envFrom calueFrom 无法热更新
@@ -13,6 +13,7 @@ config and secret  Tips:
 
 ## 综合实验
 
+### 使用  secret 管理 https 的证书
 ~~~shell
 [root@server01 ~]# mkdir secret
 [root@server01 ~]# cd secret/
@@ -62,7 +63,7 @@ server {
 ~~~
 ![image.png](https://gitee.com/xiaojinliaqi/img/raw/master/202408051411210.png)
 
-编写 nginx. yaml 文件
+#编写 nginx. yaml 文件
 ```shell
 vim nginx.yaml
 ###
@@ -95,20 +96,73 @@ spec:
 #部署nginx
 kubectl apply -f nginx.yaml
 
+#列出当前 Kubernetes 集群中所有的服务。输出通常包括每个服务的名称、命名空间、类型、Cluster IP、外部 IP、端口和其他相关信息
+[root@server01 secret]# kubectl get service
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)            AGE
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP            13d
+nginxsvc     ClusterIP   10.100.69.80   <none>        8080/TCP,443/TCP   6m24s
+
+#添加地址解析，IP地址是nginxsvc的ip
+vim /etc/hosts
+添加：10.100.69.80 www.lq.com
+
+访问curl
+curl --cacert tls.crt https://www.lq.com/
+```
+![image.png](https://gitee.com/xiaojinliaqi/img/raw/master/202408051438169.png)
+
+进容器查看配置文件是否更新 （热更新）
+![image.png](https://gitee.com/xiaojinliaqi/img/raw/master/202408051442997.png)
 
 
+### 使用  ingress 做代理访问
 
-
-
+编辑 web-ingress. yaml 文件
+```shell
+vim web-ingress.yaml
+###
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: www.lq.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginxsvc
+            port:
+              number: 443
+  tls:
+  - hosts:
+    - www.lq.com
+    secretName: nginx-test-tls
+```
+部署
+```shell
+kubectl apply -f web-ingress.yaml
+```
+修改地址解析 （IP 是安装 ingress 的那台主机）
+```shell
+vim /etc/hosts
+添加：10.15.200.11 www.lq.com
 ```
 
-
-
-
-
-
-
-
+curl 访问
+```shell
+curl --cacert tls.crt https://www.lq.com
+```
+![image.png](https://gitee.com/xiaojinliaqi/img/raw/master/202408051457707.png)
 
 
 
@@ -152,7 +206,6 @@ vim components.yaml
 ~~~sh
 kubectl apply -f components.yaml
 ~~~
-
 ![image-20240805111520410](https://gitee.com/xiaojinliaqi/img/raw/master/202408051115500.png)
 
 查询去哪台节下载镜像
@@ -160,7 +213,6 @@ kubectl apply -f components.yaml
 ~~~sh
 kubectl get pod --namespace kube-system -o wide 
 ~~~
-
 ![image-20240805111642813](https://gitee.com/xiaojinliaqi/img/raw/master/202408051116860.png)
 
 在server02节点上下载镜像
@@ -174,7 +226,6 @@ nerdctl pull --namespace k8s.io registry.cn-zhangjiakou.aliyuncs.com/xiaojinliaq
 ~~~sh
 kubectl get pod --namespace kube-system
 ~~~
-
 ![image-20240805112422353](https://gitee.com/xiaojinliaqi/img/raw/master/202408051124396.png)
 
 查询 Kubernetes 集群中各个节点的资源使用情况，包括 CPU 和内存使用情况
@@ -192,7 +243,6 @@ kubectl get pod --namespace kube-system
 ~~~sh
 kubectl top node
 ~~~
-
  ![image-20240805113640383](https://gitee.com/xiaojinliaqi/img/raw/master/202408051140412.png)
 
 ~~~
