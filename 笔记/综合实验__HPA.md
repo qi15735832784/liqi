@@ -23,8 +23,10 @@ config and secret  Tips:
 [root@server01 secret]# kubectl exec web -- cat /etc/nginx/nginx.conf > nginx.conf
 [root@server01 secret]# kubectl exec web -- cat /etc/nginx/conf.d/default.conf > default.conf
 [root@server01 secret]# vim nginx.conf 
-10行修改为512
+#10行修改为512
 
+[root@server01 secret]# vim default.conf
+按文件所需的修改
 server {
     listen       443 ssl;
     server_name  www.lq.com;
@@ -41,8 +43,10 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded_For $proxy_add_x_forwarded_for;
     }
+[root@server01 secret]# kubectl create configmap webconfig --from-file ./default.conf 
+[root@server01 secret]# kubectl create configmap nginxconfig --from-file ./nginx.conf 
 
-
+##查询key的值
 
 
 
