@@ -130,7 +130,7 @@ kubectl top node
 
  ![image-20240805113640383](https://gitee.com/xiaojinliaqi/img/raw/master/202408051140412.png)
 
+~~~
 
 
-
-
+~~~
