@@ -92,6 +92,8 @@ spec:
           subPath: nginx.conf
         - name: web
 ###
+#部署nginx
+kubectl apply -f nginx.yaml
 
 
 
