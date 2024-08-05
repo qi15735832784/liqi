@@ -46,11 +46,70 @@ server {
 [root@server01 secret]# kubectl create configmap webconfig --from-file ./default.conf 
 [root@server01 secret]# kubectl create configmap nginxconfig --from-file ./nginx.conf 
 
-##查询key的值
-
-
-
+##`ConfigMap` 对象的详细信息输出，来自 Kubernetes。`ConfigMap` 用于存储配置信息，这些信息可以被挂载到容器中或者作为环境变量使用
+- **服务器配置**：
+    
+    - `listen 443 ssl;`：Nginx 监听 443 端口，并启用 SSL。
+    - `server_name www.lq.com;`：服务器名称为 `www.lq.com`。
+    - `ssl_certificate` 和 `ssl_certificate_key`：指定 SSL 证书和私钥的位置。
+- **位置配置**：
+    
+    - `location / {}`：处理根路径的请求。
+        - `root /usr/share/nginx/html;`：指定请求的根目录。
+        - `index index.html index.htm;`：指定默认的索引文件。
+        - `proxy_set_header`：设置 HTTP 头部，用于将请求的主机、真实 IP 和转发的 IP 传递给后端服务。
+[root@server01 secret]# kubectl describe configmaps webconfig 
 ~~~
+![image.png](https://gitee.com/xiaojinliaqi/img/raw/master/202408051411210.png)
+
+编写 nginx. yaml 文件
+```shell
+vim nginx.yaml
+###
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-cluster
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: conf
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: web
+###
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
