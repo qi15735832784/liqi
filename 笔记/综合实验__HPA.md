@@ -265,8 +265,8 @@ spec:
             cpu: 500m
             memory: 100Mi
           requests:
-            cpu: 200m
-            memory: 50Mi
+            cpu: 500m
+            memory: 100Mi
         volumeMounts:
         - name: nginx-html
           mountPath: /usr/share/nginx/html/
@@ -311,18 +311,6 @@ spec:
       - name: nginx-html
         hostPath:
           path: /html
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: web-service
-spec:
-  selector:
-    app: web
-  ports:
-    - protocol: TCP
-      port: 443
-      targetPort: 443
 [root@server01 8_5_work]# cat ingress.yaml 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
