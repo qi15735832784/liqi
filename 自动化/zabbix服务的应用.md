@@ -12,9 +12,7 @@ l Zabbix企业级高级应用
 
 l Zabbix监控网站实战
 
-4、Zabbix 
 
- 
 
 Zabbix 是一个基于 WEB 界面的提供分布式系统监视以及网络监视功能的企业级的开源解决方案。zabbix 能监视各种网络参数,保证服务器系统的安全运营;并提供灵活的通知机制以让系统管理员快速定位/解决存在的各种问题。
 
@@ -94,7 +92,7 @@ Api 的支持,方便与其他系统结合
 
  
 
-### **5****、Zabbix监控方式**
+### **5**、Zabbix监控方式
 
 #### 1、被动模式
 
@@ -114,7 +112,9 @@ Api 的支持,方便与其他系统结合
 
 Zabbix由几个主要的软件组件构成，这些组件的功能如下。
 
-##### **![111](https://gitee.com/xiaojinliaqi/img/raw/master/202408121551852.png)**1、Zabbix Server
+##### **![111](https://gitee.com/xiaojinliaqi/img/raw/master/202408121551852.png)
+
+##### 1、Zabbix Server
 
  
 
@@ -164,13 +164,13 @@ Zabbix agents监控代理 部署在监控目标上，能够主动监控本地资
 
 ###### 1、为Server X创建一个host并关联一个用于对CPU进行监控的监控项（Item）。
 
-###### 2、创建一个Trigger，设置成当CPU负载过高时会触发 
+###### 2、创建一个Trigger，设置成当CPU负载过高时会触发
 
-###### 3、Trigger被触发，发送告警邮件 
+###### 3、Trigger被触发，发送告警邮件
 
 虽然看起来有很多步骤，但是使用模板的话操作起来其实很简单，Zabbix 这样的设计使得配置机制非常灵活易用。 
 
-### **8**、Zabbix 常用术语的含义
+### 7、Zabbix 常用术语的含义
 
 ![img](https://gitee.com/xiaojinliaqi/img/raw/master/202408121551872.jpg)
 
@@ -178,7 +178,7 @@ Zabbix agents监控代理 部署在监控目标上，能够主动监控本地资
 
  
 
-###### 1、主机 (host) 
+###### 1、主机 (host)
 
  
 
@@ -483,15 +483,13 @@ php：
 
 ![img](https://gitee.com/xiaojinliaqi/img/raw/master/202408121546428.jpg)
 
- 
+ ![image-20240813103300716](https://gitee.com/xiaojinliaqi/img/raw/master/202408131033782.png)
 
-![img](C:/Users/%E6%9D%8E%E7%90%A6/AppData/Local/Temp/msohtmlclip1/01/clip_image008.jpg)
+![image-20240813103317231](https://gitee.com/xiaojinliaqi/img/raw/master/202408131033271.png)
 
-![img](https://gitee.com/xiaojinliaqi/img/raw/master/202408121546421.jpg)
+![image-20240813103335300](https://gitee.com/xiaojinliaqi/img/raw/master/202408131033333.png)
 
-![img](C:/Users/%E6%9D%8E%E7%90%A6/AppData/Local/Temp/msohtmlclip1/01/clip_image012.jpg)
-
-![img](https://gitee.com/xiaojinliaqi/img/raw/master/202408121546399.jpg)
+![image-20240813103348022](https://gitee.com/xiaojinliaqi/img/raw/master/202408131033061.png)
 
  
 
@@ -511,16 +509,178 @@ php：
 
 ###  zabbix-agent
 
+ 安装网络yum源
+
+~~~shell
+[root@localhost ~]# rpm -ivh **https**://repo.zabbix.com/zabbix/4.2/rhel/7/x86_64/zabbix-release-4.2-1.el7.noarch.rpm
+
+[root@localhost ~]# wget -O /etc/yum.repos.d/Centos-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+
+[root@localhost ~]# wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+
+[root@localhost ~]# yum -y install epel-release
+
+[root@localhost ~]# vim /etc/yum.repos.d/zabbix.repo
+gpgcheck=0
+gpgcheck=0
+~~~
+
+
+
+安装组件
+
+~~~shell
+[root@localhost ~]# yum -y install zabbix-agent zabbix-sender
+~~~
+
+
+
+修改配置文件
+
+~~~shell
+[root@localhost ~]# cd /etc/zabbix/
+[root@localhost zabbix]# ls
+zabbix_agentd.conf zabbix_agentd.d
+#防止手残做个备份
+[root@localhost zabbix]# cp zabbix_agentd.conf zabbix_agentd.conf.bak
+[root@localhost zabbix]# vim zabbix_agentd.conf
+98 Server=192.168.100.10 #服务端的ip地址
+106 ListenPort=10050 #监听端口
+114 ListenIP=0.0.0.0 #监听任意地址
+123 StartAgents=3 #agent连接server的时间
+139 ServerActive=192.168.100.10 #主动连接server的IP地址
+150 Hostname=node1 #server端识别agent的名称
+~~~
+
+
+
+修改主机名
+
+~~~shell
+[root@localhost zabbix]# hostnamectl set-hostname node1
+[root@localhost zabbix]# bash
+~~~
+
+
+
+启动agent
+
+~~~shell
+[root@node1 zabbix]# systemctl start zabbix-agent
+[root@node1 zabbix]# netstat -anput | grep 10050
+tcp    0 0 0.0.0.0:10050  0.0.0.0:* LISTEN   61501/zabbix_agentd
+~~~
+
+
+
+### zabbix-server：（写解析地址）
+
+~~~shell
+[root@localhost zabbix]# vim /etc/hosts
+192.168.100.11 node1
+~~~
+
+
+
+创建主机和群组
+
+![image-20240813205129212](https://gitee.com/xiaojinliaqi/img/raw/master/202408132051255.png)
+
+![image-20240813205302047](https://gitee.com/xiaojinliaqi/img/raw/master/202408132053087.png)
+
  
 
+创建主机
 
+![image-20240813205425261](https://gitee.com/xiaojinliaqi/img/raw/master/202408132054304.png)
 
-
-
- 
-
- 
+ ![image-20240813205622918](https://gitee.com/xiaojinliaqi/img/raw/master/202408132056966.png)
 
  
 
- 
+添加监控项
+
+![image-20240813205727004](https://gitee.com/xiaojinliaqi/img/raw/master/202408132057054.png)
+
+![image-20240813205745379](https://gitee.com/xiaojinliaqi/img/raw/master/202408132057410.png)
+
+![image-20240813205753577](https://gitee.com/xiaojinliaqi/img/raw/master/202408132057613.png)
+
+![image-20240813205804130](https://gitee.com/xiaojinliaqi/img/raw/master/202408132058169.png)
+
+![image-20240813205854176](https://gitee.com/xiaojinliaqi/img/raw/master/202408132058214.png)
+
+![image-20240813210004839](https://gitee.com/xiaojinliaqi/img/raw/master/202408132100905.png)
+
+添加监控项（带参数）
+
+创建应用集
+
+![image-20240813210049053](https://gitee.com/xiaojinliaqi/img/raw/master/202408132100095.png)
+
+![image-20240813210109740](https://gitee.com/xiaojinliaqi/img/raw/master/202408132101783.png)
+
+![image-20240813210124000](https://gitee.com/xiaojinliaqi/img/raw/master/202408132101049.png)
+
+![image-20240813210147696](https://gitee.com/xiaojinliaqi/img/raw/master/202408132101733.png)
+
+![image-20240813210437822](https://gitee.com/xiaojinliaqi/img/raw/master/202408132104864.png)
+
+![image-20240813210508422](https://gitee.com/xiaojinliaqi/img/raw/master/202408132105469.png)
+
+![image-20240813210533136](https://gitee.com/xiaojinliaqi/img/raw/master/202408132105179.png)
+
+![image-20240813210656924](https://gitee.com/xiaojinliaqi/img/raw/master/202408132106971.png)
+
+通过命令获取值（只能获取命令执行这一刻的数值）
+
+~~~shell
+[root@localhost ~]# zabbix_get -s 10.15.200.11 -p 10050 -k "net.if.in[ens32,packets]"
+22917
+~~~
+
+
+
+自动发现
+
+再准备一台agent
+
+IP地址：192.168.100.12（10.15.200.12）
+
+主机名：node2
+
+服务端修改hosts文件添加node2的主机名和IP地址
+
+![image-20240813210947163](https://gitee.com/xiaojinliaqi/img/raw/master/202408132109204.png)
+
+![image-20240813211006904](https://gitee.com/xiaojinliaqi/img/raw/master/202408132110945.png)
+
+![image-20240813211027255](https://gitee.com/xiaojinliaqi/img/raw/master/202408132110295.png)
+
+![image-20240813211042929](https://gitee.com/xiaojinliaqi/img/raw/master/202408132110980.png)
+
+![image-20240813211100396](https://gitee.com/xiaojinliaqi/img/raw/master/202408132111453.png)
+
+
+
+自动发现动作
+
+![image-20240813211148857](https://gitee.com/xiaojinliaqi/img/raw/master/202408132111893.png)
+
+![image-20240813211211093](https://gitee.com/xiaojinliaqi/img/raw/master/202408132112137.png)
+
+使用相同的方式添加其他三个条件
+
+![image-20240813211231088](https://gitee.com/xiaojinliaqi/img/raw/master/202408132112129.png)
+
+![image-20240813211246802](https://gitee.com/xiaojinliaqi/img/raw/master/202408132112854.png)
+
+![image-20240813211258774](https://gitee.com/xiaojinliaqi/img/raw/master/202408132112821.png)
+
+![image-20240813211316075](https://gitee.com/xiaojinliaqi/img/raw/master/202408132113118.png)
+
+![image-20240813211329841](https://gitee.com/xiaojinliaqi/img/raw/master/202408132113879.png)
+
+![image-20240813211349692](https://gitee.com/xiaojinliaqi/img/raw/master/202408132113748.png)
+
+![image-20240813211607582](https://gitee.com/xiaojinliaqi/img/raw/master/202408132116627.png)
