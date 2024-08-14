@@ -761,48 +761,52 @@ echo "${messages}" | mail -s "${subject}" $1 >> /tmp/mailx.log 2>&1
 
 ![image-20240814104819138](https://gitee.com/xiaojinliaqi/img/raw/master/202408141048196.png)
 
-
+自定义键值
 
 ~~~shell
-自定义键值
-agent1
+agent1：
 [root@node1 ~]# vim /etc/zabbix/check_httpd.sh
-添加
 #!/bin/bash
 a=`systemctl status httpd`
 if [ "$?" = 0 ];then
-        echo '0'
+        echo '0' 
 else
         echo '1'
 fi
+
 安装httpd
-[root@node1 ~]# yum -y install httpd
-给予授权并测试脚本
+[root@node1 yum.repos.d]# yum -y install httpd
+测试脚本
 [root@node1 ~]# chmod +x /etc/zabbix/check_httpd.sh 
+http未启动返回1
 [root@node1 ~]# /etc/zabbix/check_httpd.sh 
 1
-启动httpd并返回0
-[root@node1 ~]# systemctl restart httpd
+httpd启动返回0
+[root@node1 ~]# systemctl start httpd
 [root@node1 ~]# /etc/zabbix/check_httpd.sh 
 0
-修改agent配置文件并自定义键值
+
+修改agent配置文件，自定义键值
 [root@node1 ~]# vim /etc/zabbix/zabbix_agentd.conf
-287  UnsafeUserParameters=1  #开启自定义键值
-296  UserParameter=check_httpd,sh /etc/zabbix/check_httpd.sh 
-              自定义键值名称   调用键值时执行该脚本
+287 UnsafeUserParameters=1  #开启自定义·键值
+296 UserParameter=check_httpd,sh /etc/zabbix/check_httpd.sh
+              自定义键值名称  调用键值时执行该脚本
+
 重启agent服务
 [root@node1 ~]# systemctl restart zabbix-agent
 [root@node1 ~]# netstat -anput | grep 10050
-tcp        0      0 0.0.0.0:10050           0.0.0.0:*               LISTEN      2689/zabbix_agentd  
-zabbix-server
+tcp        00 0.0.0.0:10050   0.0.0.0:* LISTEN      68472/zabbix_agentd
+
+zabbix-server：
 验证
-agent1在httpd启动的状态下查看自定义键值返回的数值
-[root@localhost ~]# zabbix_get -s 192.168.10.22 -k check_httpd
+agent1再httpd启动的状态下查看自定义键值返回的数值
+[root@localhost ~]# zabbix_get -s 192.168.100.11 -k check_httpd
 0
+
 将agent1的httpd服务停止后，测试该键值是否可以正常检测
-[root@node1 ~]# systemctl stop httpd
-[root@localhost ~]# zabbix_get -s 192.168.10.22 -k check_httpd
+[root@localhost ~]# zabbix_get -s 192.168.100.11 -k check_httpd
 1
+
 
 ~~~
 
