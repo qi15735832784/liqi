@@ -684,3 +684,125 @@ IP地址：192.168.100.12（10.15.200.12）
 ![image-20240813211349692](https://gitee.com/xiaojinliaqi/img/raw/master/202408132113748.png)
 
 ![image-20240813211607582](https://gitee.com/xiaojinliaqi/img/raw/master/202408132116627.png)
+
+
+
+自动注册
+
+![image-20240814084836358](https://gitee.com/xiaojinliaqi/img/raw/master/202408140848427.png)
+
+![image-20240814085108352](https://gitee.com/xiaojinliaqi/img/raw/master/202408140851406.png)
+
+![image-20240814085150821](https://gitee.com/xiaojinliaqi/img/raw/master/202408140851871.png)
+
+![image-20240814085640819](https://gitee.com/xiaojinliaqi/img/raw/master/202408140856867.png)
+
+
+
+配置邮件报警
+
+zabbix绑定邮箱获取授权码 vrfjrmigimcaebci
+
+![image-20240814094912160](https://gitee.com/xiaojinliaqi/img/raw/master/202408140949216.png)
+
+
+
+~~~shell
+[root@localhost ~]# yum -y install mailx
+[root@localhost ~]# vim /etc/mail.rc
+ 70 set sendcharsets=iso-8859-1,utf-8   #字符集
+ 71 set from=2590220540@qq.com   #自己邮箱
+ 72 set smtp=smtp.qq.com   #使用qq邮箱
+ 73 set smtp-auth-user=2590220540@qq.com  #自己邮箱
+ 74 set smtp-auth-password=ujkkxearyckleaaj   #自己的授权码
+ 75 set smtp-auth=login   #使用身份验证的方式进行登陆
+#测试发邮件
+[root@localhost ~]# echo "guqinyuewoaini" |  mail -s "zabbix" 2590220540@qq.com
+~~~
+
+编写发邮件发邮件的脚本
+
+~~~shell
+[root@localhost zabbix]# cd /usr/lib/zabbix/alertscripts/
+[root@localhost alertscripts]# vim mailx.sh
+#!/bin/bash
+#send mail
+messages=echo $3 | tr '\r\n' 'n'
+subject=echo $2 | tr '\r\n' 'n'
+echo "${messages}" | mail -s "${subject}" $1 >> /tmp/mailx.log 2>&1
+
+[root@localhost alertscripts]# touch /tmp/mailx.log
+[root@localhost alertscripts]# chown -R zabbix:zabbix /tmp/mailx.log 
+[root@localhost alertscripts]# chmod +x mailx.sh 
+[root@localhost alertscripts]# chown -R zabbix:zabbix /usr/lib/zabbix/
+~~~
+
+![image-20240814102905087](https://gitee.com/xiaojinliaqi/img/raw/master/202408141029160.png)
+
+{ALERT.SENDTO}
+
+{ALERT.SUBJECT}  
+
+{ALERT.MESSAGE} 
+
+![image-20240814103213826](https://gitee.com/xiaojinliaqi/img/raw/master/202408141032885.png)
+
+![image-20240814103606413](https://gitee.com/xiaojinliaqi/img/raw/master/202408141036499.png)
+
+
+
+发送邮件需要绑定用户
+
+管理 → 用户 → Admin → 报警媒介 → 添加 → 收件人 → 添加 → 更新
+
+![image-20240814104605877](https://gitee.com/xiaojinliaqi/img/raw/master/202408141046944.png)
+
+![image-20240814104747960](https://gitee.com/xiaojinliaqi/img/raw/master/202408141047030.png)
+
+![image-20240814104819138](https://gitee.com/xiaojinliaqi/img/raw/master/202408141048196.png)
+
+
+
+~~~shell
+自定义键值
+agent1
+[root@node1 ~]# vim /etc/zabbix/check_httpd.sh
+添加
+#!/bin/bash
+a=`systemctl status httpd`
+if [ "$?" = 0 ];then
+        echo '0'
+else
+        echo '1'
+fi
+安装httpd
+[root@node1 ~]# yum -y install httpd
+给予授权并测试脚本
+[root@node1 ~]# chmod +x /etc/zabbix/check_httpd.sh 
+[root@node1 ~]# /etc/zabbix/check_httpd.sh 
+1
+启动httpd并返回0
+[root@node1 ~]# systemctl restart httpd
+[root@node1 ~]# /etc/zabbix/check_httpd.sh 
+0
+修改agent配置文件并自定义键值
+[root@node1 ~]# vim /etc/zabbix/zabbix_agentd.conf
+287  UnsafeUserParameters=1  #开启自定义键值
+296  UserParameter=check_httpd,sh /etc/zabbix/check_httpd.sh 
+              自定义键值名称   调用键值时执行该脚本
+重启agent服务
+[root@node1 ~]# systemctl restart zabbix-agent
+[root@node1 ~]# netstat -anput | grep 10050
+tcp        0      0 0.0.0.0:10050           0.0.0.0:*               LISTEN      2689/zabbix_agentd  
+zabbix-server
+验证
+agent1在httpd启动的状态下查看自定义键值返回的数值
+[root@localhost ~]# zabbix_get -s 192.168.10.22 -k check_httpd
+0
+将agent1的httpd服务停止后，测试该键值是否可以正常检测
+[root@node1 ~]# systemctl stop httpd
+[root@localhost ~]# zabbix_get -s 192.168.10.22 -k check_httpd
+1
+
+~~~
+
