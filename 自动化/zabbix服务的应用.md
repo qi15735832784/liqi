@@ -806,7 +806,237 @@ agent1再httpd启动的状态下查看自定义键值返回的数值
 将agent1的httpd服务停止后，测试该键值是否可以正常检测
 [root@localhost ~]# zabbix_get -s 192.168.100.11 -k check_httpd
 1
-
-
 ~~~
 
+触发器
+
+server
+
+![image-20240815173325934](https://gitee.com/xiaojinliaqi/img/raw/master/202408151733107.png)
+
+![image-20240815173404154](https://gitee.com/xiaojinliaqi/img/raw/master/202408151734199.png)
+
+![image-20240815173414617](https://gitee.com/xiaojinliaqi/img/raw/master/202408151734665.png)
+
+添加触发器
+
+![image-20240815173451123](https://gitee.com/xiaojinliaqi/img/raw/master/202408151734163.png)
+
+![image-20240815173511429](https://gitee.com/xiaojinliaqi/img/raw/master/202408151735474.png)
+
+![image-20240815173530030](https://gitee.com/xiaojinliaqi/img/raw/master/202408151735085.png)
+
+![image-20240815173548849](https://gitee.com/xiaojinliaqi/img/raw/master/202408151735908.png)
+
+![image-20240815173604823](https://gitee.com/xiaojinliaqi/img/raw/master/202408151736878.png)
+
+添加动作
+
+![image-20240815173706089](https://gitee.com/xiaojinliaqi/img/raw/master/202408151737135.png)
+
+![image-20240815173730591](https://gitee.com/xiaojinliaqi/img/raw/master/202408151737651.png)
+
+![image-20240815173752452](https://gitee.com/xiaojinliaqi/img/raw/master/202408151737509.png)
+
+![image-20240815173808192](https://gitee.com/xiaojinliaqi/img/raw/master/202408151738245.png)
+
+![image-20240815173822860](https://gitee.com/xiaojinliaqi/img/raw/master/202408151738907.png)
+
+![image-20240815173845539](https://gitee.com/xiaojinliaqi/img/raw/master/202408151738596.png)
+
+![image-20240815173903449](https://gitee.com/xiaojinliaqi/img/raw/master/202408151739503.png)
+
+验证：
+
+agent1：
+
+停止apache
+
+[root@node1 ~]# systemctl stop httpd
+
+实验效果（两种效果均为正确）
+
+1、远程命令执行成功（node1上httpd启动成功），此时不会发送邮件（问题会变为已解决）
+
+2、远程命令执行失败，执行第二个动作（发送邮件）
+
+ 
+
+server
+
+![image-20240815173940055](https://gitee.com/xiaojinliaqi/img/raw/master/202408151739107.png)
+
+![image-20240815173956397](https://gitee.com/xiaojinliaqi/img/raw/master/202408151739448.png)
+
+![image-20240815174019925](https://gitee.com/xiaojinliaqi/img/raw/master/202408151740983.png)
+
+
+
+页面篡改
+
+agent1
+
+修改网站页面
+
+~~~shell
+[root@node1 ~]# echo zabbix > /var/www/html/index.html
+[root@node1 ~]# curl localhost
+zabbix
+~~~
+
+
+
+编写监控页面的脚本文件
+
+~~~shell
+[root@node1 ~]# vim /tmp/auto_montitor_httpd.sh
+\#!/bin/bash
+aa=`curl -s http://192.168.100.11 | grep -c "zabbix"`
+echo $aa
+~~~
+
+
+
+授权
+
+~~~shell
+[root@node1 ~]# chmod +x /tmp/auto_montitor_httpd.sh
+~~~
+
+
+
+自定义键值
+
+~~~shell
+[root@node1 ~]# vim /etc/zabbix/zabbix_agentd.conf
+297 UserParameter=check_httpd_word,sh /tmp/auto_montitor_httpd.sh
+~~~
+
+
+
+~~~shell
+[root@node1 ~]# systemctl restart zabbix-agent
+[root@node1 ~]# netstat -anput | grep 10050
+tcp    0   0 0.0.0.0:10050      0.0.0.0:*        LISTEN   70915/zabbix_agentd
+~~~
+
+
+
+server端检查键值是否可以使用
+
+~~~shell
+[root@localhost ~]# zabbix_get -s 192.168.100.11 -k check_httpd_word
+1
+~~~
+
+
+
+配置监控项
+
+![image-20240815174234192](https://gitee.com/xiaojinliaqi/img/raw/master/202408151742259.png)
+
+![image-20240815174310173](https://gitee.com/xiaojinliaqi/img/raw/master/202408151743220.png)
+
+![image-20240815174337493](https://gitee.com/xiaojinliaqi/img/raw/master/202408151743554.png)
+
+![image-20240815174357330](https://gitee.com/xiaojinliaqi/img/raw/master/202408151743385.png)
+
+![image-20240815174411669](https://gitee.com/xiaojinliaqi/img/raw/master/202408151744731.png)
+
+![image-20240815174436683](https://gitee.com/xiaojinliaqi/img/raw/master/202408151744739.png)
+
+![image-20240815174454490](https://gitee.com/xiaojinliaqi/img/raw/master/202408151744542.png)
+
+![image-20240815174516848](https://gitee.com/xiaojinliaqi/img/raw/master/202408151745904.png)
+
+![image-20240815174526072](https://gitee.com/xiaojinliaqi/img/raw/master/202408151745123.png)
+
+![image-20240815174536464](https://gitee.com/xiaojinliaqi/img/raw/master/202408151745526.png)
+
+![image-20240815174546506](https://gitee.com/xiaojinliaqi/img/raw/master/202408151745557.png)
+
+验证
+
+agent1
+
+![image-20240815174833054](https://gitee.com/xiaojinliaqi/img/raw/master/202408151748110.png)
+
+agent1：
+
+~~~shell
+[root@node1 ~]# yum -y install mariadb*
+~~~
+
+
+
+zabbix系统中有监控mysql的模板，可以直接使用
+
+~~~shell
+[root@node1 ~]# vim /etc/zabbix/zabbix_agentd.d/userparameter_mysql.conf
+17 UserParameter=mysql.ping,HOME=/var/lib/zabbix mysqladmin ping 2> /dev/null | grep -c alive
+~~~
+
+
+
+~~~shell
+[root@node1 ~]# systemctl restart zabbix-agent
+
+[root@node1 ~]# netstat -anput | grep zabbix_agentd
+
+tcp    0   0 0.0.0.0:10050  0.0.0.0:* LISTEN  71987/zabbix_agentd
+~~~
+
+
+
+启动mariadb
+
+~~~shell
+[root@node1 ~]# systemctl start mariadb
+~~~
+
+
+
+zabbix测试键值是否可以使用（0未启动 1启动）
+
+~~~shell
+[root@localhost ~]# zabbix_get -s 192.168.100.11 -k mysql.ping
+1
+~~~
+
+![image-20240815174922006](https://gitee.com/xiaojinliaqi/img/raw/master/202408151749054.png)
+
+ ![image-20240815174936447](https://gitee.com/xiaojinliaqi/img/raw/master/202408151749507.png)
+
+
+
+监控项：
+
+ ![image-20240815175007733](https://gitee.com/xiaojinliaqi/img/raw/master/202408151750790.png)
+
+创建动作
+
+![image-20240815175026753](https://gitee.com/xiaojinliaqi/img/raw/master/202408151750799.png)
+
+‘![image-20240815175101951](https://gitee.com/xiaojinliaqi/img/raw/master/202408151751014.png)
+
+![image-20240815175116063](https://gitee.com/xiaojinliaqi/img/raw/master/202408151751130.png)
+
+![image-20240815175130543](https://gitee.com/xiaojinliaqi/img/raw/master/202408151751611.png)
+
+
+
+agent：
+
+将mariadb停止验证
+
+~~~shell
+[root@node1 ~]# systemctl stop mariadb
+~~~
+
+
+
+server
+
+![image-20240815175223854](https://gitee.com/xiaojinliaqi/img/raw/master/202408151752925.png)
+
+ 
