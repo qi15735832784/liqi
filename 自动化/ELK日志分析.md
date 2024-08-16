@@ -118,7 +118,7 @@ vm.max_map_count = 655360 #jvm可以派生的最大进程值
 145 # hosts: ["localhost:9200"]
 取消注释
 153 output.logstash:
-154  # The Logstash hosts
+154  # The Logstash hosts  #（此处的#号不取消）
 155  hosts: ["10.15.200.11:5044"] #聚合端IP地址（第二台）
 ~~~
 
@@ -139,9 +139,9 @@ vm.max_map_count = 655360 #jvm可以派生的最大进程值
 ~~~shell
 [root@localhost ~]# vim /usr/local/logstash/config/logstash.yml
 取消注释
-64 path.config: /usr/local/logstash/config/*.conf #包连接使用的配置文件
-77 config.reload.automatic: true #自动加载手动编写的内容
-81 config.reload.interval: 3s #取消注释 自动加载间隔时间
+64 path.config: /usr/local/logstash/config/*.conf  #包含连接使用的配置文件
+77 config.reload.automatic: true  #自动加载手动编写的内容
+81 config.reload.interval: 3s  #自动加载间隔时间
 190 http.host: "10.15.200.11" #监听本机IP地址
 #编写连接配置文件
 [root@localhost ~]# vim /usr/local/logstash/config/nginx-access.conf
@@ -162,15 +162,118 @@ index => "nokafka-nginx"  #索引页（搜索日志时使用）
 
 第三台
 
+~~~shell
 重启完成后重新关闭防火墙和沙盒（没有关闭开机自启）
+[root@localhost ~]# systemctl stop firewalld
+[root@localhost ~]# systemctl disable firewalld
+[root@localhost ~]# setenforce 0
+生效
+[root@localhost ~]# sysctl -p
+vm.max_map_count = 655360 #jvm可以派生的最大进程值
+
+修改配置文件
+[root@localhost ~]# vim /usr/local/es/config/elasticsearch.yml
+17 cluster.name: my-application  #集群名称
+23 node.name: node-1  #节点名称
+24 node.master: true  #当前节点作为主节点
+25 node.data: true    #数据存放再当前节点
+35 path.data: /es/data  #数据目录
+39 path.logs: /es/log  #日志目录
+45 bootstrap.memory_lock: false  #不对使用的内存进行限制
+46 bootstrap.system_call_filter: false  #不对使用的系统资源进行限制
+58 network.host: 10.15.200.12  #本机IP
+62 http.port: 9200  #监听端口号
+75 discovery.zen.minimum_master_nodes: 1  #当前集群中有几个节点
+~~~
+
+
+
+第四台
+
+~~~shell
+[root@localhost ~]# vim /usr/local/kibana/config/kibana.yml
+2 server.port: 5601  #监听端口
+7 server.host: "10.15.200.13"  #本机IP
+28 elasticsearch.url: "http://10.15.200.12:9200"  #指定es的IP地址（第三台）
+~~~
+
+
+
+### 启动
+
+第一台：
+
+~~~shell
+[root@localhost ~]# nginx
+[root@localhost ~]# /usr/local/filebeat/filebeat -c /usr/local/filebeat/filebeat.yml
+~~~
+
+
+
+第二台
+
+ ~~~shell
+ [root@localhost ~]# /usr/local/logstash/bin/logstash -f /usr/local/logstash/config/nginx-access.conf
+ ~~~
+
+
+
+第三台
+
+~~~shell
+切换到普通用户启动es
+[root@localhost ~]# su es
+[es@localhost root]$ /usr/local/es/bin/elasticsearch
+~~~
 
  
 
-生效
+第四台
 
-[root@localhost ~]# sysctl -p
+~~~shell
+[root@localhost ~]# /usr/local/kibana/bin/kibana
+~~~
 
-vm.max_map_count = 655360
 
-[root@localhost ~]# vim /usr/local/es/config/elasticsearch.yml 
+
+在第一台访问
+
+~~~shell
+对nginx多次访问（产生访问日志）
+[root@localhost ~]# curl 192.168.100.10
+访问第四台的图形化界面
+[root@localhost ~]# firefox 192.168.100.13:5601
+~~~
+
+![image-20240816121226472](https://gitee.com/xiaojinliaqi/img/raw/master/202408161212566.png)
+
+![image-20240816121639788](https://gitee.com/xiaojinliaqi/img/raw/master/202408161216850.png)
+
+![image-20240816121741004](https://gitee.com/xiaojinliaqi/img/raw/master/202408161217060.png)
+
+![image-20240816121900012](https://gitee.com/xiaojinliaqi/img/raw/master/202408161219070.png)
+
+![image-20240816121940445](https://gitee.com/xiaojinliaqi/img/raw/master/202408161219505.png)
+
+![image-20240816122041391](https://gitee.com/xiaojinliaqi/img/raw/master/202408161220450.png)
+
+多次访问nginx刷新页面查看访问量是否发生变化
+
+![image-20240816122305990](https://gitee.com/xiaojinliaqi/img/raw/master/202408161223040.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
