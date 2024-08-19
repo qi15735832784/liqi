@@ -1,5 +1,47 @@
 # ELK日志分析
 
+### ELK：日志分析
+
+E：es（elasticsearch）
+
+L：logstash
+
+K：kibana
+
+### 日志分析系统的作用：
+
+1、信息检索---快速找到bug---修复、优化
+
+2、服务的诊断--- >负载情况和运行状态
+
+3、数据的分析
+
+### 日志分析系统的组件
+
+1、采集端（agent） ：采集日志源数据，对数据进行封装并发送给聚合端
+
+2、聚合端（collector）：搜集来自多个采集端的日志数据，并且按照一定的规则进行数据的处理
+
+3、存储端storage：负责存储来自聚合端的数据
+
+![image-20240819115459924](https://gitee.com/xiaojinliaqi/img/raw/master/202408191155023.png)
+
+Data collection：数据的收集
+
+data processing：数据的处理
+
+storage：数据的存储
+
+visualize：数据的可视化
+
+redis：消息队列（当数据量不高时，可以省略）
+
+logstash：数据的处理，使用数据存储更方便，建立索引
+
+elastic search ：直接对数据的索引进行存储·
+
+kibana： 从es里面拿去数据进行显示，有内置的一些分析工具，将数据进行分析，筛选
+
 
 
 
