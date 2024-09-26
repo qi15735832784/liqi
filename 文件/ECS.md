@@ -216,9 +216,7 @@ http://101.201.38.127/index.php
 [root@server01 ~]# mysql -ulq -pLq040212 -h rm-2ze654b28o91vj565.mysql.rds.aliyuncs.com
 ~~~
 
-
-
-拉取wordpress包
+拉取wordpress包并解压
 
 ~~~shell
 tar -zxf wordpress-6.2.tar.gz -C /nginx/
