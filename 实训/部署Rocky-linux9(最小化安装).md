@@ -389,7 +389,7 @@ pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
 
 最后使用虚拟机测试机
 
-### 使用 `Cobbler` 配置 PXE 部署环境的步骤
+## 使用 `Cobbler` 配置 PXE 部署环境的步骤
 
 ~~~shell
 # dnf install -y epel-release
