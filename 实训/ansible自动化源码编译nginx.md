@@ -807,6 +807,6 @@ ansible-playbook mian.yaml
 
 ![image-20250319130246669](https://gitee.com/xiaojinliaqi/img/raw/master/202503191302935.png)
 
-11.访问`http://10.15.200.134/zabbix/index.php`
+## 11.访问`http://10.15.200.134/zabbix/index.php`
 
 ![image-20250319130440932](https://gitee.com/xiaojinliaqi/img/raw/master/202503191304082.png)
