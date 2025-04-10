@@ -167,7 +167,42 @@
       "i18n:I18N": false
     }
   },
-  "active": "db5f0b3ec65f9fbb",
+  "floating": {
+    "id": "bbf096c797ae3ef7",
+    "type": "floating",
+    "children": [
+      {
+        "id": "30efbae2bac44045",
+        "type": "window",
+        "children": [
+          {
+            "id": "157c87861202731d",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "0c93e3d9535fd103",
+                "type": "leaf",
+                "state": {
+                  "type": "i18n-download-view",
+                  "state": {},
+                  "icon": "i18n_translate",
+                  "title": "下载视图"
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "vertical",
+        "x": 341,
+        "y": 145,
+        "width": 1025,
+        "height": 801,
+        "maximize": false,
+        "zoom": 0
+      }
+    ]
+  },
+  "active": "0c93e3d9535fd103",
   "lastOpenFiles": [
     "kubernetes笔记/部署kubernetes.md",
     "README.en.md",
