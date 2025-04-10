@@ -1,0 +1,10 @@
+{
+  "interfaceFontFamily": "HarmonyOS Sans",
+  "textFontFamily": "HarmonyOS Sans",
+  "cssTheme": "AnuPpuccin",
+  "enabledCssSnippets": [
+    "extended-colorschemes"
+  ],
+  "theme": "moonstone",
+  "accentColor": ""
+}
