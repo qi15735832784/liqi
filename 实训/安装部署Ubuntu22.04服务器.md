@@ -1,6 +1,7 @@
 # 安装部署Ubuntu22.04服务器
 
 ##  1.准备Ubuntu镜像
+aaaaa
 
 镜像名称：ubuntu-22.04-live-server-amd64.iso
 https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso

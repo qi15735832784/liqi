@@ -11,10 +11,14 @@
             "id": "be7108047fcbe06a",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "实训/安装部署Ubuntu22.04服务器.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新标签页"
+              "title": "安装部署Ubuntu22.04服务器"
             }
           }
         ]
