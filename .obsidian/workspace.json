@@ -1,0 +1,209 @@
+{
+  "main": {
+    "id": "4caff2a005a67db7",
+    "type": "split",
+    "children": [
+      {
+        "id": "04be76359e8acd53",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "be7108047fcbe06a",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "新标签页"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "3adf6cfebc65d199",
+    "type": "split",
+    "children": [
+      {
+        "id": "37abf3265c64aaa8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "12fad823e3081e65",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "ef7e57bb30e2fba7",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "docker",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "a27eeffb7b03bc95",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 267.51103591918945
+  },
+  "right": {
+    "id": "5333afc7a5b30895",
+    "type": "split",
+    "children": [
+      {
+        "id": "2ef8ae3b7e5fffcc",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4e3eba06ed343057",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "笔记/3.28笔记.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": false
+              },
+              "icon": "links-coming-in",
+              "title": "3.28笔记 的反向链接列表"
+            }
+          },
+          {
+            "id": "4e389a5b270e6b6d",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "笔记/Pasted image 20240801165610.png",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Pasted image 20240801165610 的出链列表"
+            }
+          },
+          {
+            "id": "db5765d4f916c075",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "39471770a9db7fb9",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "笔记/Pasted image 20240801165610.png"
+              },
+              "icon": "lucide-list",
+              "title": "Pasted image 20240801165610 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "obsidian-git:Open Git source control": false,
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "obsidian42-brat:BRAT": false,
+      "pkmer:Open Pkmer Market": false
+    }
+  },
+  "active": "be7108047fcbe06a",
+  "lastOpenFiles": [
+    "自动化/Maven相关内容.md",
+    "自动化/zabbix服务的应用.md",
+    "自动化/ELK日志分析.md",
+    "自动化",
+    "文件/自我介绍.md",
+    "文件/若依前后端分离部署.md",
+    "文件/简历制作.md",
+    "文件/架构里面包含什么.md",
+    "文件/技术拓展www.md",
+    "文件/服务器介绍.md",
+    "文件/Devops.md",
+    "文件/人事常见问题.md",
+    "文件/10道题.md",
+    "文件",
+    "实训/部署Rocky-linux9(最小化安装).md",
+    "实训/重要文件.md",
+    "实训/自动部署三台Rockylinux9服务器.md",
+    "实训/自动检测CPU，内存，IO.md",
+    "实训/脚本安装nginx.md",
+    "实训/编写脚本.md",
+    "实训/源码安装lnmp，基于此平台部署zabbix.md",
+    "实训/安装部署zabbix agentd.md",
+    "实训/复习总结.md",
+    "实训/安装部署Ubuntu22.04服务器.md",
+    "实训/三剑客.md",
+    "实训/一键安装脚本.md",
+    "实训/nginx源码编译加脚本编译.md",
+    "实训/PXE引导安装ubuntu24.04.2.md",
+    "实训/kickstart与Preseed应答文件基础语法.pdf",
+    "实训",
+    "kubernetes笔记",
+    "md_to_html/convert_md_to_html.py",
+    "output/docker理论-service指令详解.html",
+    "output/docker理论-Compose实例.html",
+    "output/cgrouopV2理论.html",
+    "output/ansible安装.html",
+    "笔记/Pasted image 20240801165610.png",
+    "笔记/Pasted image 20240801165525.png",
+    "笔记/Pasted image 20240801165439.png",
+    "未命名.canvas",
+    "未命名 1.canvas"
+  ]
+}
