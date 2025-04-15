@@ -15,11 +15,9 @@
     - 调整 `innodb_buffer_pool_size`，该参数控制 InnoDB 存储引擎用于缓存数据和索引的内存大小。
         
     
-    sql
-    
-    复制编辑
-    
-    `SET GLOBAL innodb_buffer_pool_size = 4G;  # 4GB`
+    ```
+    SET GLOBAL innodb_buffer_pool_size = 4G;  # 4GB
+    ```
     
 
 ### 2. **MySQL 配置优化**
@@ -28,23 +26,21 @@
     
     - `innodb_buffer_pool_size` 决定了用于缓存数据和索引的内存大小。如果这个值设置得过小，会导致频繁的磁盘 I/O。一般建议将其设置为服务器内存的 60%-80%。
         
+    ```
+    SET GLOBAL innodb_buffer_pool_size = 8G;  # 例如 8GB
+    ```
     
-    sql
-    
-    复制编辑
-    
-    `SET GLOBAL innodb_buffer_pool_size = 8G;  # 例如 8GB`
+    ``
     
 2. **查询缓存**：
     
     - 如果你的数据库中有很多重复查询，启用查询缓存会减少查询的执行时间。请注意，查询缓存对频繁更新的数据表无效，因为数据更新会导致缓存失效。
         
+    ```
+    SET GLOBAL query_cache_type = 1; SET GLOBAL query_cache_size = 64M;
+    ```
     
-    sql
     
-    复制编辑
-    
-    `SET GLOBAL query_cache_type = 1; SET GLOBAL query_cache_size = 64M;`
     
 3. **连接池优化**：
     
@@ -52,34 +48,30 @@
         
     - 调整 `wait_timeout` 和 `interactive_timeout`，控制超时的连接数。
         
+    ```
+    SET GLOBAL max_connections = 500;  # 根据需要调整 SET GLOBAL wait_timeout = 600;     # 默认超时 600 秒 SET GLOBAL interactive_timeout = 600;
+    ```
     
-    sql
     
-    复制编辑
-    
-    `SET GLOBAL max_connections = 500;  # 根据需要调整 SET GLOBAL wait_timeout = 600;     # 默认超时 600 秒 SET GLOBAL interactive_timeout = 600;`
     
 4. **临时表大小**：
     
     - MySQL 在处理查询时可能会创建临时表。可以通过 `tmp_table_size` 和 `max_heap_table_size` 增大临时表的大小，减少磁盘写入。
         
+    ```
+    SET GLOBAL tmp_table_size = 64M; SET GLOBAL max_heap_table_size = 64M;
+    ```
     
-    sql
     
-    复制编辑
-    
-    `SET GLOBAL tmp_table_size = 64M; SET GLOBAL max_heap_table_size = 64M;`
     
 5. **日志和慢查询日志**：
     
     - 启用 **慢查询日志**，记录执行时间较长的查询，并通过分析慢查询日志来识别和优化瓶颈查询。
         
+    ```
+    SET GLOBAL slow_query_log = 'ON'; SET GLOBAL long_query_time = 2;  # 记录超过 2 秒的查询
+    ```
     
-    sql
-    
-    复制编辑
-    
-    `SET GLOBAL slow_query_log = 'ON'; SET GLOBAL long_query_time = 2;  # 记录超过 2 秒的查询`
     
 
 ### 3. **查询优化**
@@ -90,12 +82,10 @@
         
     - **复合索引**：对于涉及多个列的查询，可以考虑创建复合索引，而不是单列索引。
         
+    ```
+    CREATE INDEX idx_name ON table_name (column1, column2);
+    ```
     
-    sql
-    
-    复制编辑
-    
-    `CREATE INDEX idx_name ON table_name (column1, column2);`
     
 2. **避免全表扫描**：
     
