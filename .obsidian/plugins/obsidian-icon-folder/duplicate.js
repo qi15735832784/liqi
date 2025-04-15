@@ -367,7 +367,7 @@ class ConsoleLogger {
     }
     error(message, prefix, ...optionalParams) {
         if (this.enabled) {
-            console.error(...this.formatMessage('错误', message, prefix, optionalParams));
+            console.error(...this.formatMessage('error', message, prefix, optionalParams));
         }
     }
     toggleLogging(enabled) {
@@ -384,7 +384,7 @@ const getPath = () => {
 const setPath = (newPath) => {
     if (newPath === 'plugins/obsidian-icon-folder/icons') {
         newPath = '.obsidian/plugins/obsidian-icon-folder/icons';
-        new obsidian.Notice(`[${config.PLUGIN_NAME}]由于v1.2.2版本的更改，图标包文件夹发生了变化。请在设置中将其更改为不直接在 /plugins 中。`, 8000);
+        new obsidian.Notice(`[${config.PLUGIN_NAME}] Due to a change in version v1.2.2, the icon pack folder changed. Please change it in the settings to not be directly in /plugins.`, 8000);
     }
     path = newPath;
 };
@@ -445,11 +445,11 @@ const moveIconPackDirectories = (plugin, from, to) => __awaiter(void 0, void 0, 
             // Tries to create a new directory in the new path.
             const doesDirExist = yield createDirectory(plugin, iconPack.name);
             if (doesDirExist) {
-                new obsidian.Notice(`名为${iconBack.name}的目录已存在。`);
+                new obsidian.Notice(`Directory with name ${iconPack.name} already exists.`);
                 continue;
             }
         }
-        new obsidian.Notice(`正在移动${iconPack.name}……`);
+        new obsidian.Notice(`Moving ${iconPack.name}...`);
         // Move the zip file.
         if (yield plugin.app.vault.adapter.exists(`${from}/${iconPack.name}.zip`)) {
             yield plugin.app.vault.adapter.copy(`${from}/${iconPack.name}.zip`, `${to}/${iconPack.name}.zip`);
@@ -460,7 +460,7 @@ const moveIconPackDirectories = (plugin, from, to) => __awaiter(void 0, void 0, 
             const fileName = file.split('/').pop();
             yield plugin.app.vault.adapter.copy(`${from}/${iconPack.name}/${fileName}`, `${to}/${iconPack.name}/${fileName}`);
         }
-        new obsidian.Notice(`…移动了${iconPack.name}`);
+        new obsidian.Notice(`...moved ${iconPack.name}`);
     }
     // Removes all the existing icon packs in the `from` directory.
     for (let i = 0; i < iconPacks.length; i++) {
@@ -524,11 +524,11 @@ const createFile = (plugin, iconPackName, filename, content, absoluteFilename) =
             const newFilename = folderName + normalizedFilename;
             yield plugin.app.vault.adapter.write(`${path}/${iconPackName}/${newFilename}`, content);
             logger.info(`Renamed old file ${normalizedFilename} to ${newFilename} due to duplication`);
-            new obsidian.Notice(`[${config.PLUGIN_NAME}]将${normalizedFilename}重命名为${newFilename}以避免重复。`, 8000);
+            new obsidian.Notice(`[${config.PLUGIN_NAME}] Renamed ${normalizedFilename} to ${newFilename} to avoid duplication.`, 8000);
         }
         else {
             logger.warn(`Could not create icons with duplicated file names (file name: ${normalizedFilename})`);
-            new obsidian.注意(`[${config.PLUGIN_NAME}] 无法创建重复的图标名称 (${normalizedFilename})`, 8000);
+            new obsidian.Notice(`[${config.PLUGIN_NAME}] Could not create duplicated icon name (${normalizedFilename})`, 8000);
         }
     }
     else {
@@ -630,7 +630,7 @@ const loadIcon = (plugin, iconPackNames, iconName) => __awaiter(void 0, void 0, 
         // Ignore because background check automatically adds the icons and icon pack
         // directories.
         if (!plugin.getSettings().iconsBackgroundCheckEnabled) {
-            new obsidian.Notice(`您似乎没有安装图标包。 (${iconName})`, 5000);
+            new obsidian.Notice(`Seems like you do not have an icon pack installed. (${iconName})`, 5000);
         }
         return;
     }
@@ -3150,13 +3150,13 @@ class IconsPickerModal extends obsidian.FuzzySuggestModal {
             if (this.renderIndex === 0) {
                 const subheadline = this.resultContainerEl.createDiv();
                 subheadline.classList.add('iconize-subheadline');
-                subheadline.innerText = '最近使用的图标：';
+                subheadline.innerText = 'Recently used Icons:';
                 this.resultContainerEl.prepend(subheadline);
             }
             else if (this.renderIndex === this.recentlyUsedItems.size - 1) {
                 const subheadline = this.resultContainerEl.createDiv();
                 subheadline.classList.add('iconize-subheadline');
-                subheadline.innerText = '所有图标：';
+                subheadline.innerText = 'All Icons:';
                 this.resultContainerEl.append(subheadline);
             }
         }
@@ -3215,7 +3215,7 @@ function migrate$5(plugin) {
     return __awaiter(this, void 0, void 0, function* () {
         // Migration for new syncing mechanism.
         if (plugin.getSettings().migrated === 1) {
-            new obsidian.Notice('请删除旧的图标包并重新下载图标包以使用新的同步机制。', 20000);
+            new obsidian.Notice('Please delete your old icon packs and redownload your icon packs to use the new syncing mechanism.', 20000);
             plugin.getSettings().migrated++;
         }
     });
@@ -3471,7 +3471,7 @@ function migrate$3(plugin) {
                 hasRemovedInheritance = true;
             }
             if (hasRemovedInheritance) {
-                new obsidian.Notice(`[${config.PLUGIN_NAME}]继承已被删除，并替换为自定义规则。`);
+                new obsidian.Notice(`[${config.PLUGIN_NAME}] Inheritance has been removed and replaced with custom rules.`);
             }
             plugin.getSettings().migrated++;
         }
@@ -3643,14 +3643,14 @@ const checkMissingIcons = (plugin, data) => __awaiter(void 0, void 0, void 0, fu
         }
         const icon = getIconFromIconPack(iconPackName, iconPrefix, iconName);
         if (!icon) {
-            logger.error(`找不到名为${iconNameWithPrefix}的图标文件`);
+            logger.error(`Icon file with name ${iconNameWithPrefix} could not be found`);
             return null;
         }
         const doesIconFileExists = yield plugin.app.vault.adapter.exists(`${getPath()}/${iconPackName}/${iconName}.svg`);
         if (!doesIconFileExists) {
             const possibleIcon = getSvgFromLoadedIcon(iconPrefix, iconName);
             if (!possibleIcon) {
-                logger.error(`找不到名为${iconNameWithPrefix}的图标SVG`);
+                logger.error(`Icon SVG with name ${iconNameWithPrefix} could not be found`);
                 return null;
             }
             yield extractIconToIconPack(plugin, icon, possibleIcon);
@@ -3683,7 +3683,7 @@ const checkMissingIcons = (plugin, data) => __awaiter(void 0, void 0, void 0, fu
     }
     // Show notice that background check is running.
     if (missingIcons.size !== 0) {
-        new obsidian.Notice(`[${config.PLUGIN_NAME}]背景检查：发现缺少图标。正在添加缺失的图标……`, 10000);
+        new obsidian.Notice(`[${config.PLUGIN_NAME}] Background Check: found missing icons. Adding missing icons...`, 10000);
     }
     // Iterates over all the missing icons with its path and adds the icon to the node.
     for (const icon of missingIcons) {
@@ -3695,7 +3695,7 @@ const checkMissingIcons = (plugin, data) => __awaiter(void 0, void 0, void 0, fu
     }
     // Show notice that background check was finished.
     if (missingIcons.size !== 0) {
-        new obsidian.Notice(`[${config.PLUGIN_NAME}]背景检查：添加了缺失的图标`, 10000);
+        new obsidian.Notice(`[${config.PLUGIN_NAME}] Background Check: added missing icons`, 10000);
     }
     // Remove all icon files that can not be found in the data.
     for (const iconPack of getAllIconPacks()) {
@@ -3941,14 +3941,14 @@ class CustomIconPackSetting extends IconFolderSetting {
     }
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('添加自定义图标包')
-            .setDesc('添加一个自定义图标包。')
+            .setName('Add custom icon pack')
+            .setDesc('Add a custom icon pack.')
             .addText((text) => {
-            text.setPlaceholder('你的图标包名称');
+            text.setPlaceholder('Your icon pack name');
             this.textComponent = text;
         })
             .addButton((btn) => {
-            btn.setButtonText('添加图标包');
+            btn.setButtonText('Add icon pack');
             btn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                 const name = this.textComponent.getValue();
                 if (name.length === 0) {
@@ -3956,13 +3956,13 @@ class CustomIconPackSetting extends IconFolderSetting {
                 }
                 const normalizedName = this.normalizeIconPackName(this.textComponent.getValue());
                 if (yield doesIconPackExist(this.plugin, normalizedName)) {
-                    new obsidian.Notice('图标包已存在。');
+                    new obsidian.Notice('Icon pack already exists.');
                     return;
                 }
                 yield createCustomIconPackDirectory(this.plugin, normalizedName);
                 this.textComponent.setValue('');
                 this.refreshDisplay();
-                new obsidian.Notice('图标包已成功创建。');
+                new obsidian.Notice('Icon pack successfully created.');
             }));
         });
         // Sorts lucide icon pack always to the top.
@@ -3975,15 +3975,15 @@ class CustomIconPackSetting extends IconFolderSetting {
         });
         iconPacks.forEach((iconPack) => {
             const isLucideIconPack = iconPack.name === LUCIDE_ICON_PACK_NAME;
-            const additionalLucideDescription = '(Native Pack 图标较少，但支持 100% Obsidian同步)';
+            const additionalLucideDescription = '(Native Pack has fewer icons but 100% Obsidian Sync support)';
             const iconPackSetting = new obsidian.Setting(this.containerEl)
                 .setName(`${iconPack.name} (${iconPack.prefix})`)
-                .setDesc(`图标总数: ${iconPack.icons.length}${isLucideIconPack ? ` ${additionalLucideDescription}` : ''}`);
+                .setDesc(`Total icons: ${iconPack.icons.length}${isLucideIconPack ? ` ${additionalLucideDescription}` : ''}`);
             // iconPackSetting.addButton((btn) => {
             //   btn.setIcon('broken-link');
-            //   btn.setTooltip('尝试修复图标包');
+            //   btn.setTooltip('Try to fix icon pack');
             //   btn.onClick(async () => {
-            //     new Notice('尝试修复图标包……');
+            //     new Notice('Try to fix icon pack...');
             //     getIconPack(iconPack.name).icons = [];
             //     const icons = await getFilesInDirectory(this.plugin, `${getPath()}/${iconPack.name}`);
             //     for (let i = 0; i < icons.length; i++) {
@@ -3997,7 +3997,7 @@ class CustomIconPackSetting extends IconFolderSetting {
             //       await normalizeFileName(this.plugin, filePath);
             //       addIconToIconPack(iconPack.name, fileName, iconContent);
             //     }
-            //     new Notice('…尝试修复图标包');
+            //     new Notice('...tried to fix icon pack');
             //     // Refreshes the DOM.
             //     Object.entries(this.plugin.getData()).forEach(async ([k, v]) => {
             //       const doesPathExist = await this.plugin.app.vault.adapter.exists(k, true);
@@ -4018,7 +4018,7 @@ class CustomIconPackSetting extends IconFolderSetting {
                     dropdown.setValue(this.plugin.getSettings().lucideIconPackType);
                     dropdown.onChange((value) => __awaiter(this, void 0, void 0, function* () {
                         dropdown.setDisabled(true);
-                        new obsidian.Notice('正在更改图标包……');
+                        new obsidian.Notice('Changing icon packs...');
                         this.plugin.getSettings().lucideIconPackType = value;
                         yield this.plugin.saveIconFolderData();
                         if (value === 'native' || value === 'none') {
@@ -4030,14 +4030,14 @@ class CustomIconPackSetting extends IconFolderSetting {
                             yield icon.checkMissingIcons(this.plugin, Object.entries(this.plugin.getData()));
                         }
                         dropdown.setDisabled(false);
-                        new obsidian.Notice('已完成。此更改需要重新启动Obsidian');
+                        new obsidian.Notice('Done. This change requires a restart of Obsidian');
                     }));
                 });
                 return;
             }
             iconPackSetting.addButton((btn) => {
                 btn.setIcon('plus');
-                btn.setTooltip('添加一个图标');
+                btn.setTooltip('Add an icon');
                 btn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                     const fileSelector = document.createElement('input');
                     fileSelector.setAttribute('type', 'file');
@@ -4051,19 +4051,19 @@ class CustomIconPackSetting extends IconFolderSetting {
                             const content = yield readFileSync(file);
                             yield createFile(this.plugin, iconPack.name, file.name, content);
                             addIconToIconPack(iconPack.name, file.name, content);
-                            iconPackSetting.setDesc(`图标总数：${iconPack.icons.length}(已添加：${file.name})`);
+                            iconPackSetting.setDesc(`Total icons: ${iconPack.icons.length} (added: ${file.name})`);
                         }
-                        new obsidian.Notice('图标已成功添加。');
+                        new obsidian.Notice('Icons successfully added.');
                     });
                 }));
             });
             iconPackSetting.addButton((btn) => {
                 btn.setIcon('trash');
-                btn.setTooltip('移除图标包');
+                btn.setTooltip('Remove the icon pack');
                 btn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                     yield deleteIconPack(this.plugin, iconPack.name);
                     this.refreshDisplay();
-                    new obsidian.Notice('图标包已成功删除。');
+                    new obsidian.Notice('Icon pack successfully deleted.');
                 }));
             });
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((event) => {
@@ -4081,17 +4081,17 @@ class CustomIconPackSetting extends IconFolderSetting {
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
                     if (file.type !== 'image/svg+xml') {
-                        new obsidian.Notice(`文件${file.name}不是SVG文件。`);
+                        new obsidian.Notice(`File ${file.name} is not a SVG file.`);
                         continue;
                     }
                     successful = true;
                     const content = yield readFileSync(file);
                     yield createFile(this.plugin, iconPack.name, file.name, content);
                     addIconToIconPack(iconPack.name, file.name, content);
-                    iconPackSetting.setDesc(`图标总数：${iconPack.icons.length}(已添加：${file.name})`);
+                    iconPackSetting.setDesc(`Total icons: ${iconPack.icons.length} (added: ${file.name})`);
                 }
                 if (successful) {
-                    new obsidian.Notice('图标已成功添加。');
+                    new obsidian.Notice('Icons successfully added.');
                 }
             }), false);
         });
@@ -4145,8 +4145,8 @@ class CustomIconRuleSetting extends IconFolderSetting {
     }
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('添加图标规则')
-            .setDesc('将根据定义的规则添加图标（作为纯文本字符串或正则表达式格式）。')
+            .setName('Add icon rule')
+            .setDesc('Will add the icon based on the defined rule (as a plain string or in regex format).')
             .addText((text) => {
             text.onChange((value) => {
                 this.chooseIconBtn.setDisabled(value.length === 0);
@@ -4155,12 +4155,12 @@ class CustomIconRuleSetting extends IconFolderSetting {
                 this.chooseIconBtn.buttonEl.style.opacity =
                     value.length === 0 ? '50%' : '100%';
             });
-            text.setPlaceholder('正则表达式或简单字符串');
+            text.setPlaceholder('regex or simple string');
             this.textComponent = text;
         })
             .addButton((btn) => {
             btn.setDisabled(true);
-            btn.setButtonText('选择图标');
+            btn.setButtonText('Choose icon');
             btn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                 if (this.textComponent.getValue().length === 0) {
                     return;
@@ -4180,7 +4180,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                     ];
                     yield this.plugin.saveIconFolderData();
                     this.refreshDisplay();
-                    new obsidian.Notice('已添加图标规则。');
+                    new obsidian.Notice('Icon rule added.');
                     this.textComponent.setValue('');
                     saveIconToIconPack(this.plugin, rule.icon);
                     yield customRule.addToAllFiles(this.plugin, rule);
@@ -4195,7 +4195,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
             const oldRule = Object.assign({}, rule);
             const settingRuleEl = new obsidian.Setting(this.containerEl)
                 .setName(rule.rule)
-                .setDesc(`图标：${rule.icon}`);
+                .setDesc(`Icon: ${rule.icon}`);
             const currentOrder = rule.order;
             /**
              * Re-orders the custom rule based on the value that is passed in.
@@ -4240,7 +4240,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                     : 'default';
                 btn.extraSettingsEl.style.opacity = isFirstOrder ? '50%' : '100%';
                 btn.setIcon('arrow-up');
-                btn.setTooltip('优先处理自定义规则');
+                btn.setTooltip('Prioritize the custom rule');
                 btn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                     yield orderCustomRules(-1);
                 }));
@@ -4254,7 +4254,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                     : 'default';
                 btn.extraSettingsEl.style.opacity = isLastOrder ? '50%' : '100%';
                 btn.setIcon('arrow-down');
-                btn.setTooltip('降低自定义规则的优先级');
+                btn.setTooltip('Deprioritize the custom rule');
                 btn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                     yield orderCustomRules(1);
                 }));
@@ -4262,14 +4262,14 @@ class CustomIconRuleSetting extends IconFolderSetting {
             // Add the edit custom rule button.
             settingRuleEl.addButton((btn) => {
                 btn.setIcon('pencil');
-                btn.setTooltip('编辑自定义规则');
+                btn.setTooltip('Edit the custom rule');
                 btn.onClick(() => {
                     var _a, _b;
                     // Create modal and its children elements.
                     const modal = new obsidian.Modal(this.plugin.app);
                     modal.contentEl.style.display = 'block';
                     modal.modalEl.classList.add('iconize-custom-modal');
-                    modal.titleEl.setText('编辑自定义规则');
+                    modal.titleEl.setText('Edit custom rule');
                     // Create the input for the rule.
                     this.createDescriptionEl(modal.contentEl, 'Regex or simple string');
                     const input = new obsidian.TextComponent(modal.contentEl);
@@ -4283,7 +4283,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                     useFilePathContainer.style.justifyContent = 'space-between';
                     useFilePathContainer.style.marginTop = 'var(--size-4-5)';
                     const useFilePathDescription = useFilePathContainer.createEl('p', {
-                        text: '包括路径中的文件夹和文件。',
+                        text: 'Include folders and files that are part of the path.',
                         cls: 'setting-item-description',
                     });
                     useFilePathDescription.style.margin = '0';
@@ -4300,7 +4300,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                     ruleTypeContainer.style.justifyContent = 'space-between';
                     ruleTypeContainer.style.marginTop = 'var(--size-4-5)';
                     const ruleTypeDescription = ruleTypeContainer.createEl('p', {
-                        text: '自定义规则应用于何处。',
+                        text: 'Where the custom rule gets applied to.',
                         cls: 'setting-item-description',
                     });
                     ruleTypeDescription.style.margin = '0';
@@ -4316,7 +4316,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                         else {
                             ruleTypeButton.setIcon('documents');
                         }
-                        ruleTypeButton.setTooltip(`图标适用于：${isFor}`);
+                        ruleTypeButton.setTooltip(`Icon applicable to: ${isFor}`);
                     };
                     setButtonContent((_a = rule.for) !== null && _a !== void 0 ? _a : 'everything');
                     ruleTypeButton.onClick(() => __awaiter(this, void 0, void 0, function* () {
@@ -4356,7 +4356,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                     iconNameEl.style.marginLeft = 'var(--size-2-2)';
                     iconNameEl.innerText = rule.icon;
                     const changeIconBtn = new obsidian.ButtonComponent(iconContainer);
-                    changeIconBtn.setButtonText('更改图标');
+                    changeIconBtn.setButtonText('Change icon');
                     changeIconBtn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                         const modal = new IconsPickerModal(this.app, this.plugin, rule.icon);
                         modal.onChooseItem = (item) => __awaiter(this, void 0, void 0, function* () {
@@ -4380,8 +4380,8 @@ class CustomIconRuleSetting extends IconFolderSetting {
                         rule.color = value;
                     });
                     const defaultColorButton = new obsidian.ButtonComponent(colorContainer);
-                    defaultColorButton.setTooltip('将颜色设置为默认颜色');
-                    defaultColorButton.setButtonText('默认');
+                    defaultColorButton.setTooltip('Set color to the default one');
+                    defaultColorButton.setButtonText('Default');
                     defaultColorButton.onClick(() => {
                         colorPicker.setValue('#000000');
                         rule.color = undefined;
@@ -4390,7 +4390,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                     const button = new obsidian.ButtonComponent(modal.contentEl);
                     button.buttonEl.style.marginTop = 'var(--size-4-4)';
                     button.buttonEl.style.float = 'right';
-                    button.setButtonText('保存更改');
+                    button.setButtonText('Save Changes');
                     button.onClick(() => __awaiter(this, void 0, void 0, function* () {
                         if (!emoji.isEmoji(oldRule.icon)) {
                             // Tries to remove the previously used icon from the icon pack.
@@ -4402,7 +4402,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                             rule.icon = getNormalizedName(rule.icon);
                         }
                         this.refreshDisplay();
-                        new obsidian.Notice('自定义规则已更新。');
+                        new obsidian.Notice('Custom rule updated.');
                         // Refresh the DOM.
                         yield customRule.removeFromAllFiles(this.plugin, oldRule);
                         this.updateIconTabs(rule, true);
@@ -4419,7 +4419,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
             // Add the delete custom rule button.
             settingRuleEl.addButton((btn) => {
                 btn.setIcon('trash');
-                btn.setTooltip('移除自定义规则');
+                btn.setTooltip('Remove the custom rule');
                 btn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                     const newRules = this.plugin
                         .getSettings()
@@ -4430,7 +4430,7 @@ class CustomIconRuleSetting extends IconFolderSetting {
                     this.plugin.getSettings().rules = newRules;
                     yield this.plugin.saveIconFolderData();
                     this.refreshDisplay();
-                    new obsidian.Notice('自定义规则已删除。');
+                    new obsidian.Notice('Custom rule deleted.');
                     yield customRule.removeFromAllFiles(this.plugin, rule);
                     removeIconFromIconPack(this.plugin, rule.icon);
                     this.updateIconTabs(rule, true);
@@ -4638,8 +4638,8 @@ const isPx = (value) => {
 class EmojiStyleSetting extends IconFolderSetting {
     display() {
         const emojiStyle = new obsidian.Setting(this.containerEl)
-            .setName('表情风格')
-            .setDesc('更改你的情绪符号样式。');
+            .setName('Emoji style')
+            .setDesc('Change the style of your emojis.');
         emojiStyle.addDropdown((dropdown) => {
             dropdown.addOption('native', 'Native');
             dropdown.addOption('twemoji', 'Twemoji');
@@ -4727,14 +4727,14 @@ class ExtraMarginSetting extends IconFolderSetting {
     display() {
         var _a, _b;
         const extraMarginSetting = new obsidian.Setting(this.containerEl)
-            .setName('额外边距（以像素为单位）')
-            .setDesc('更改图标的间距。')
+            .setName('Extra margin (in pixels)')
+            .setDesc('Change the margin of the icons.')
             .setClass('iconize-setting');
         const extraMarginDropdown = new obsidian.DropdownComponent(extraMarginSetting.controlEl).addOptions({
-            top: '顶部',
-            right: '右',
-            bottom: '底部',
-            left: '左',
+            top: 'Top',
+            right: 'Right',
+            bottom: 'Bottom',
+            left: 'Left',
         });
         const extraMarginSlider = new obsidian.SliderComponent(extraMarginSetting.controlEl)
             .setLimits(-24, 24, 1)
@@ -4770,7 +4770,7 @@ class ResetButtonComponent extends obsidian.ButtonComponent {
     constructor(contentEl) {
         super(contentEl);
         this.contentEl = contentEl;
-        this.setTooltip('恢复默认');
+        this.setTooltip('Restore default');
         this.setIcon('rotate-ccw');
         this.render();
     }
@@ -4785,8 +4785,8 @@ class IconColorSetting extends IconFolderSetting {
     display() {
         var _a;
         const setting = new obsidian.Setting(this.containerEl)
-            .setName('图标颜色')
-            .setDesc('更改显示图标的颜色。');
+            .setName('Icon color')
+            .setDesc('Change the color of the displayed icons.');
         new ResetButtonComponent(setting.controlEl).onClick(() => __awaiter(this, void 0, void 0, function* () {
             colorPicker.setValue(DEFAULT_VALUE);
             this.plugin.getSettings().iconColor = null;
@@ -4813,8 +4813,8 @@ const values = {
 class IconFontSizeSetting extends IconFolderSetting {
     display() {
         const setting = new obsidian.Setting(this.containerEl)
-            .setName('图标字体大小（以像素为单位）')
-            .setDesc('更改显示图标的字体大小。');
+            .setName('Icon font size (in pixels)')
+            .setDesc('Change the font size of the displayed icons.');
         new ResetButtonComponent(setting.controlEl).onClick(() => {
             this.slider.setValue(values.default);
         });
@@ -4837,27 +4837,27 @@ class IconFontSizeSetting extends IconFolderSetting {
 class IconPacksPathSetting extends IconFolderSetting {
     display() {
         const iconPacksPathSetting = new obsidian.Setting(this.containerEl)
-            .setName('图标包文件夹路径')
-            .setDesc('更改默认图标包文件夹路径。');
+            .setName('Icon packs folder path')
+            .setDesc('Change the default icon packs folder path.');
         iconPacksPathSetting.addText((text) => {
             this.iconPacksSettingTextComp = text;
             text.setValue(this.plugin.getSettings().iconPacksPath);
         });
         iconPacksPathSetting.addButton((btn) => {
-            btn.setButtonText('保存');
+            btn.setButtonText('Save');
             btn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                 const newPath = this.iconPacksSettingTextComp.getValue();
                 const oldPath = this.plugin.getSettings().iconPacksPath;
                 if (oldPath === this.iconPacksSettingTextComp.getValue()) {
                     return;
                 }
-                new obsidian.Notice('正在保存……');
+                new obsidian.Notice('Saving in progress...');
                 setPath(newPath);
                 yield createDefaultDirectory(this.plugin);
                 yield moveIconPackDirectories(this.plugin, oldPath, newPath);
                 this.plugin.getSettings().iconPacksPath = newPath;
                 yield this.plugin.saveIconFolderData();
-                new obsidian.Notice('…已成功保存');
+                new obsidian.Notice('...saved successfully');
             }));
         });
     }
@@ -4866,8 +4866,8 @@ class IconPacksPathSetting extends IconFolderSetting {
 class IconPacksBackgroundChecker extends IconFolderSetting {
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('图标背景检查')
-            .setDesc('在每次加载 Obsidian 时检查缺失的图标，并尝试将它们添加到相应的图标包中。')
+            .setName('Icons background check')
+            .setDesc('Check in the background on every load of Obsidian, if icons are missing and it will try to add them to the specific icon pack.')
             .addToggle((toggle) => {
             toggle
                 .setValue(this.plugin.getSettings().iconsBackgroundCheckEnabled)
@@ -4875,7 +4875,7 @@ class IconPacksBackgroundChecker extends IconFolderSetting {
                 this.plugin.getSettings().iconsBackgroundCheckEnabled = enabled;
                 yield this.plugin.saveIconFolderData();
                 if (enabled) {
-                    new obsidian.Notice('您需要重新加载 Obsidian 才能生效。', 10000);
+                    new obsidian.Notice('You need to reload Obsidian for this to take effect.', 10000);
                 }
             }));
         });
@@ -4887,7 +4887,7 @@ class IconPackBrowserModal extends obsidian.FuzzySuggestModal {
         super(app);
         this.plugin = plugin;
         this.resultContainerEl.classList.add('iconize-browse-modal');
-        this.inputEl.placeholder = '选择要下载的图标包';
+        this.inputEl.placeholder = 'Select to download icon pack';
     }
     // eslint-disable-next-line
     onAddedIconPack() { }
@@ -4908,11 +4908,11 @@ class IconPackBrowserModal extends obsidian.FuzzySuggestModal {
     }
     onChooseItem(item, _event) {
         return __awaiter(this, void 0, void 0, function* () {
-            new obsidian.Notice(`正在添加${item.displayName}……`);
+            new obsidian.Notice(`Adding ${item.displayName}...`);
             const arrayBuffer = yield downloadZipFile(item.downloadLink);
             yield createZipFile(this.plugin, `${item.name}.zip`, arrayBuffer);
             yield registerIconPack(item.name, arrayBuffer);
-            new obsidian.Notice(`…已添加${item.displayName}`);
+            new obsidian.Notice(`...${item.displayName} added`);
             this.onAddedIconPack();
         });
     }
@@ -4930,10 +4930,10 @@ class PredefinedIconPacksSetting extends IconFolderSetting {
     }
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('添加预定义的图标包')
-            .setDesc('添加一个官方支持的预定义图标包。')
+            .setName('Add predefined icon pack')
+            .setDesc('Add a predefined icon pack that is officially supported.')
             .addButton((btn) => {
-            btn.setButtonText('浏览图标包');
+            btn.setButtonText('Browse icon packs');
             btn.onClick(() => {
                 const modal = new IconPackBrowserModal(this.app, this.plugin);
                 modal.onAddedIconPack = () => {
@@ -4948,8 +4948,8 @@ class PredefinedIconPacksSetting extends IconFolderSetting {
 class RecentlyUsedIconsSetting extends IconFolderSetting {
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('最近使用的图标限制')
-            .setDesc('更改在图标选择框中显示的最近使用的图标的数量限制。')
+            .setName('Recently used icons limit')
+            .setDesc('Change the limit for the recently used icons displayed in the icon selection modal.')
             .addSlider((slider) => {
             var _a;
             slider
@@ -4968,8 +4968,8 @@ class RecentlyUsedIconsSetting extends IconFolderSetting {
 class ToggleIconInTabs extends IconFolderSetting {
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('在标签中切换图标')
-            .setDesc('切换标签栏中文件图标的状态。')
+            .setName('Toggle icon in tabs')
+            .setDesc('Toggles the visibility of an icon for a file in the tab bar.')
             .addToggle((toggle) => {
             toggle
                 .setValue(this.plugin.getSettings().iconInTabsEnabled)
@@ -5023,14 +5023,14 @@ class ToggleIconInTitle extends IconFolderSetting {
     }
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('在标题中切换图标')
-            .setDesc('切换文件标题上方图标的可见性。')
+            .setName('Toggle icon in title')
+            .setDesc('Toggles the visibility of an icon above the title of a file.')
             .addDropdown((dropdown) => {
             this.dropdown = dropdown;
             dropdown.setDisabled(!this.plugin.getSettings().iconInTitleEnabled);
             dropdown.addOptions({
-                above: '在标题上',
-                inline: '在标题旁边',
+                above: 'Above title',
+                inline: 'Next to title',
             });
             dropdown.setValue(this.plugin.getSettings().iconInTitlePosition);
             dropdown.onChange((value) => __awaiter(this, void 0, void 0, function* () {
@@ -5058,8 +5058,8 @@ class ToggleIconInTitle extends IconFolderSetting {
 class FrontmatterOptions extends IconFolderSetting {
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('在 frontmatter 中使用图标')
-            .setDesc('切换是否根据 frontmatter 属性 `icon` 设置图标。')
+            .setName('Use icon in frontmatter')
+            .setDesc('Toggles whether to set the icon based on the frontmatter property `icon`.')
             .addToggle((toggle) => {
             toggle
                 .setValue(this.plugin.getSettings().iconInFrontmatterEnabled)
@@ -5069,14 +5069,14 @@ class FrontmatterOptions extends IconFolderSetting {
             }));
         });
         new obsidian.Setting(this.containerEl)
-            .setName('Frontmatter 图标字段名称')
-            .setDesc('设置包含图标的 frontmatter 字段的名称。')
+            .setName('Frontmatter icon field name')
+            .setDesc('Sets the name of the frontmatter field which contains the icon.')
             .addText((text) => {
             this.iconFieldNameTextComp = text;
             text.setValue(this.plugin.getSettings().iconInFrontmatterFieldName);
         })
             .addButton((button) => {
-            button.setButtonText('保存');
+            button.setButtonText('Save');
             button.onClick(() => __awaiter(this, void 0, void 0, function* () {
                 const newValue = this.iconFieldNameTextComp.getValue();
                 const oldValue = this.plugin.getSettings().iconInFrontmatterFieldName;
@@ -5085,18 +5085,18 @@ class FrontmatterOptions extends IconFolderSetting {
                 }
                 this.plugin.getSettings().iconInFrontmatterFieldName = newValue;
                 yield this.plugin.saveIconFolderData();
-                new obsidian.Notice('…已成功保存');
+                new obsidian.Notice('...saved successfully');
             }));
         });
         new obsidian.Setting(this.containerEl)
-            .setName('Frontmatter 图标颜色字段名称')
-            .setDesc('设置包含图标颜色的 frontmatter 字段的名称。')
+            .setName('Frontmatter icon color field name')
+            .setDesc('Sets the name of the frontmatter field which contains the icon color.')
             .addText((text) => {
             this.iconColorFieldNameTextComp = text;
             text.setValue(this.plugin.getSettings().iconColorInFrontmatterFieldName);
         })
             .addButton((button) => {
-            button.setButtonText('保存');
+            button.setButtonText('Save');
             button.onClick(() => __awaiter(this, void 0, void 0, function* () {
                 const newValue = this.iconColorFieldNameTextComp.getValue();
                 const oldValue = this.plugin.getSettings().iconColorInFrontmatterFieldName;
@@ -5105,20 +5105,20 @@ class FrontmatterOptions extends IconFolderSetting {
                 }
                 this.plugin.getSettings().iconColorInFrontmatterFieldName = newValue;
                 yield this.plugin.saveIconFolderData();
-                new obsidian.Notice('…已成功保存');
+                new obsidian.Notice('...saved successfully');
             }));
         });
         new obsidian.Setting(this.containerEl)
-            .setName('从 frontmatter 刷新图标')
+            .setName('Refresh icons from frontmatter')
             .setDesc('Sets the icon and color for each note in the vault based on the frontmatter properties. WARNING: This will change any manually set icons to the one defined in the frontmatter. IF A NOTE HAS NO FRONTMATTER, THE CURRENT ICON WILL BE REMOVED. Please restart Obsidian after this completes to see the changes.')
             .addButton((btn) => {
-            btn.setButtonText('刷新').onClick(() => __awaiter(this, void 0, void 0, function* () {
+            btn.setButtonText('Refresh').onClick(() => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b;
                 if (!this.plugin.getSettings().iconInFrontmatterEnabled) {
-                    new obsidian.Notice(`[${config.PLUGIN_NAME}]请启用“在 frontmatter 中使用图标”。`);
+                    new obsidian.Notice(`[${config.PLUGIN_NAME}] Please enable "Use icon in frontmatter".`);
                     return;
                 }
-                new obsidian.Notice(`[${config.PLUGIN_NAME}]正在刷新 frontmatter 的图标，请稍候……`);
+                new obsidian.Notice(`[${config.PLUGIN_NAME}] Refreshing icons from frontmatter, please wait...`);
                 const files = this.plugin.app.vault.getMarkdownFiles();
                 for (const file of files) {
                     const fileCache = this.plugin.app.metadataCache.getFileCache(file);
@@ -5152,7 +5152,7 @@ class FrontmatterOptions extends IconFolderSetting {
                         : iconColor;
                     this.plugin.addIconColor(file.path, iconColor);
                 }
-                new obsidian.Notice(`[${config.PLUGIN_NAME}]已刷新 frontmatter 的图标。请重新启动Obsidian以查看更改。`);
+                new obsidian.Notice(`[${config.PLUGIN_NAME}] Refreshed icons from frontmatter. Please restart Obsidian to see the changes.`);
             }));
         });
     }
@@ -5161,15 +5161,15 @@ class FrontmatterOptions extends IconFolderSetting {
 class ToggleIconsInEditor extends IconFolderSetting {
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('在编辑笔记时切换图标')
-            .setDesc('切换是否能够在笔记和编辑器中添加和显示图标（例如，能够在笔记中使用 :LiSofa: 作为图标）。')
+            .setName('Toggle icons while editing notes')
+            .setDesc('Toggles whether you are able to add and see icons in your notes and editor (e.g., ability to have :LiSofa: as an icon in your notes).')
             .addToggle((toggle) => {
             toggle
                 .setValue(this.plugin.getSettings().iconsInNotesEnabled)
                 .onChange((enabled) => __awaiter(this, void 0, void 0, function* () {
                 this.plugin.getSettings().iconsInNotesEnabled = enabled;
                 yield this.plugin.saveIconFolderData();
-                new obsidian.Notice(`[${config.PLUGIN_NAME}]Obsidian必须重新启动才能使此更改生效。`);
+                new obsidian.Notice(`[${config.PLUGIN_NAME}] Obsidian has to be restarted for this change to take effect.`);
             }));
         });
     }
@@ -5178,15 +5178,15 @@ class ToggleIconsInEditor extends IconFolderSetting {
 class ToggleIconsInLinks extends IconFolderSetting {
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('在链接中切换图标')
-            .setDesc('切换是否在链接到其他笔记时显示图标')
+            .setName('Toggle icons in links')
+            .setDesc('Toggles whether you are able to see icons in the links to other notes')
             .addToggle((toggle) => {
             toggle
                 .setValue(this.plugin.getSettings().iconsInLinksEnabled)
                 .onChange((enabled) => __awaiter(this, void 0, void 0, function* () {
                 this.plugin.getSettings().iconsInLinksEnabled = enabled;
                 yield this.plugin.saveIconFolderData();
-                new obsidian.Notice(`[${config.PLUGIN_NAME}]Obsidian必须重新启动才能使此更改生效。`);
+                new obsidian.Notice(`[${config.PLUGIN_NAME}] Obsidian has to be restarted for this change to take effect.`);
             }));
         });
     }
@@ -5195,15 +5195,15 @@ class ToggleIconsInLinks extends IconFolderSetting {
 class IconIdentifierSetting extends IconFolderSetting {
     display() {
         const setting = new obsidian.Setting(this.containerEl)
-            .setName('图标标识符')
-            .setDesc('更改笔记中使用的图标标识符。')
+            .setName('Icon identifier')
+            .setDesc('Change the icon identifier used in notes.')
             .setClass('iconize-setting');
         setting.addText((text) => {
             this.textComp = text;
             text.setValue(this.plugin.getSettings().iconIdentifier);
         });
         setting.addButton((btn) => {
-            btn.setButtonText('保存');
+            btn.setButtonText('Save');
             btn.onClick(() => __awaiter(this, void 0, void 0, function* () {
                 const newIdentifier = this.textComp.getValue();
                 const oldIdentifier = this.plugin.getSettings().iconIdentifier;
@@ -5212,7 +5212,7 @@ class IconIdentifierSetting extends IconFolderSetting {
                 }
                 this.plugin.getSettings().iconIdentifier = newIdentifier;
                 yield this.plugin.saveIconFolderData();
-                new obsidian.Notice('…已成功保存');
+                new obsidian.Notice('...saved successfully');
             }));
         });
     }
@@ -5221,8 +5221,8 @@ class IconIdentifierSetting extends IconFolderSetting {
 class DebugMode extends IconFolderSetting {
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('切换调试模式')
-            .setDesc('切换调试模式以在控制台查看更详细的日志。除非你知道自己在做什么，否则不要更改此设置。')
+            .setName('Toggle Debug Mode')
+            .setDesc('Toggle debug mode to see more detailed logs in the console. Do not touch this unless you know what you are doing.')
             .addToggle((toggle) => {
             toggle
                 .setValue(this.plugin.getSettings().debugMode)
@@ -5237,15 +5237,15 @@ class DebugMode extends IconFolderSetting {
 class UseInternalPlugins extends IconFolderSetting {
     display() {
         new obsidian.Setting(this.containerEl)
-            .setName('实验性：使用内部插件')
-            .setDesc('切换是否尝试为书签和大纲内部插件添加图标。')
+            .setName('EXPERIMENTAL: Use internal plugins')
+            .setDesc('Toggles whether to try to add icons to the bookmark and outline internal plugins.')
             .addToggle((toggle) => {
             toggle
                 .setValue(this.plugin.getSettings().useInternalPlugins)
                 .onChange((enabled) => __awaiter(this, void 0, void 0, function* () {
                 this.plugin.getSettings().useInternalPlugins = enabled;
                 yield this.plugin.saveIconFolderData();
-                new obsidian.Notice(`[${config.PLUGIN_NAME}]Obsidian必须重新启动才能使此更改生效。`);
+                new obsidian.Notice(`[${config.PLUGIN_NAME}] Obsidian has to be restarted for this change to take effect.`);
             }));
         });
     }
@@ -5259,7 +5259,7 @@ class IconFolderSettings extends obsidian.PluginSettingTab {
     display() {
         const { plugin, containerEl, app } = this;
         containerEl.empty();
-        containerEl.createEl('h1', { text: '常规设置' });
+        containerEl.createEl('h1', { text: 'General' });
         new RecentlyUsedIconsSetting(plugin, containerEl).display();
         new IconPacksPathSetting(plugin, containerEl).display();
         new IconPacksBackgroundChecker(plugin, containerEl).display();
@@ -5267,21 +5267,21 @@ class IconFolderSettings extends obsidian.PluginSettingTab {
         new IconIdentifierSetting(plugin, containerEl).display();
         new UseInternalPlugins(plugin, containerEl).display();
         new DebugMode(plugin, containerEl).display();
-        containerEl.createEl('h3', { text: '图标的可见性' });
+        containerEl.createEl('h3', { text: 'Visibility of icons' });
         new ToggleIconInTabs(plugin, containerEl).display();
         new ToggleIconInTitle(plugin, containerEl).display();
         new FrontmatterOptions(plugin, containerEl).display();
         new ToggleIconsInEditor(plugin, containerEl).display();
         new ToggleIconsInLinks(plugin, containerEl).display();
         containerEl.createEl('h1', {
-            text: '文件/文件夹的图标自定义',
+            text: 'Icon customization for files/folders',
         });
         new IconFontSizeSetting(plugin, containerEl).display();
         new IconColorSetting(plugin, containerEl).display();
         new ExtraMarginSetting(plugin, containerEl).display();
-        containerEl.createEl('h1', { text: '自定义图标规则' });
+        containerEl.createEl('h1', { text: 'Custom icon rules' });
         new CustomIconRuleSetting(plugin, containerEl, app, () => this.display()).display();
-        containerEl.createEl('h1', { text: '图标包' });
+        containerEl.createEl('h1', { text: 'Icon packs' });
         new PredefinedIconPacksSetting(plugin, containerEl, app, () => this.display()).display();
         new CustomIconPackSetting(plugin, containerEl, () => this.display()).display();
     }
@@ -5827,11 +5827,11 @@ class OutlineInternalPlugin extends InternalPluginInjector {
     get leaf() {
         const leaf = this.plugin.app.workspace.getLeavesOfType('outline');
         if (!leaf) {
-            logger.log('outline 中的 `leaf` 未定义', LoggerPrefix.Outline);
+            logger.log('`leaf` in outline is undefined', LoggerPrefix.Outline);
             return undefined;
         }
         if (leaf.length === 0) {
-            logger.log('outline 中的 `leaf` 长度为 0', LoggerPrefix.Outline);
+            logger.log('`leaf` length in outline is 0', LoggerPrefix.Outline);
             return undefined;
         }
         return leaf[0];
@@ -6344,9 +6344,9 @@ class ChangeColorModal extends obsidian.Modal {
         this.usedColor = this.plugin.getIconColor(this.path);
         this.contentEl.style.display = 'block';
         this.modalEl.classList.add('iconize-custom-modal');
-        this.titleEl.setText('更改颜色');
+        this.titleEl.setText('Change color');
         const description = this.contentEl.createEl('p', {
-            text: '为此图标选择颜色',
+            text: 'Select a color for this icon',
             cls: 'setting-item-description',
         });
         description.style.marginBottom = 'var(--size-2-2)';
@@ -6360,8 +6360,8 @@ class ChangeColorModal extends obsidian.Modal {
             this.usedColor = value;
         });
         const defaultColorButton = new obsidian.ButtonComponent(colorContainer);
-        defaultColorButton.setTooltip('将颜色设置为默认颜色');
-        defaultColorButton.setButtonText('重置');
+        defaultColorButton.setTooltip('Set color to the default one');
+        defaultColorButton.setButtonText('Reset');
         defaultColorButton.onClick(() => {
             colorPicker.setValue('#000000');
             this.usedColor = undefined;
@@ -6370,10 +6370,10 @@ class ChangeColorModal extends obsidian.Modal {
         const button = new obsidian.ButtonComponent(this.contentEl);
         button.buttonEl.style.marginTop = 'var(--size-4-4)';
         button.buttonEl.style.float = 'right';
-        button.setButtonText('保存更改');
+        button.setButtonText('Save Changes');
         button.onClick(() => __awaiter(this, void 0, void 0, function* () {
             var _a;
-            new obsidian.Notice('图标颜色已更改。');
+            new obsidian.Notice('Color of icon changed.');
             if (this.usedColor) {
                 this.plugin.addIconColor(this.path, this.usedColor);
             }
@@ -6480,7 +6480,7 @@ class IconizePlugin extends obsidian.Plugin {
     }
     onload() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`正在加载${config.PLUGIN_NAME}`);
+            console.log(`loading ${config.PLUGIN_NAME}`);
             yield this.loadIconFolderData();
             logger.toggleLogging(this.getSettings().debugMode);
             setPath(this.getSettings().iconPacksPath);
@@ -6506,7 +6506,7 @@ class IconizePlugin extends obsidian.Plugin {
             this.app.workspace.onLayoutReady(() => this.handleChangeLayout());
             this.addCommand({
                 id: 'iconize:set-icon-for-file',
-                name: '设置文件图标',
+                name: 'Set icon for file',
                 hotkeys: [
                     {
                         modifiers: ['Mod', 'Shift'],
@@ -6568,7 +6568,7 @@ class IconizePlugin extends obsidian.Plugin {
             this.registerEvent(this.app.workspace.on('layout-change', () => this.handleChangeLayout()));
             this.registerEvent(this.app.workspace.on('file-menu', (menu, file) => {
                 const addIconMenuItem = (item) => {
-                    item.setTitle('更改图标');
+                    item.setTitle('Change icon');
                     item.setIcon('hashtag');
                     item.onClick(() => {
                         const modal = new IconsPickerModal(this.app, this, file.path);
@@ -6592,14 +6592,14 @@ class IconizePlugin extends obsidian.Plugin {
                     });
                 };
                 const removeIconMenuItem = (item) => {
-                    item.setTitle('删除图标');
+                    item.setTitle('Remove icon');
                     item.setIcon('trash');
                     item.onClick(() => __awaiter(this, void 0, void 0, function* () {
                         yield this.removeSingleIcon(file);
                     }));
                 };
                 const changeColorOfIcon = (item) => {
-                    item.setTitle('更改图标颜色');
+                    item.setTitle('Change color of icon');
                     item.setIcon('palette');
                     item.onClick(() => {
                         const modal = new ChangeColorModal(this.app, this, file.path);
@@ -6881,11 +6881,11 @@ class IconizePlugin extends obsidian.Plugin {
                         return;
                     }
                     if (typeof newIconName !== 'string') {
-                        new obsidian.Notice(`[${config.PLUGIN_NAME}]Frontmatter 属性类型“icon”必须为“text”类型。`);
+                        new obsidian.Notice(`[${config.PLUGIN_NAME}] Frontmatter property type \`icon\` has to be of type \`text\`.`);
                         return;
                     }
                     if (newIconColor && typeof newIconColor !== 'string') {
-                        new obsidian.Notice(`[${config.PLUGIN_NAME}]Frontmatter 属性类型“iconColor”必须为“text”类型。`);
+                        new obsidian.Notice(`[${config.PLUGIN_NAME}] Frontmatter property type \`iconColor\` has to be of type \`text\`.`);
                         return;
                     }
                     let iconColor = newIconColor;
@@ -6989,7 +6989,7 @@ class IconizePlugin extends obsidian.Plugin {
         }
     }
     onunload() {
-        console.log('取消加载 Obsidian 图标文件夹');
+        console.log('unloading obsidian-icon-folder');
     }
     renameFolder(newPath, oldPath) {
         if (!this.data[oldPath] || newPath === oldPath) {

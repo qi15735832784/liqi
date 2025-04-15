@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "实训/重要文件.md",
+                "file": "实训/mysql优化.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "重要文件"
+              "title": "mysql优化"
             }
           }
         ]
@@ -155,7 +155,6 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "obsidian-git:Open Git source control": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
@@ -164,52 +163,19 @@
       "command-palette:打开命令面板": false,
       "obsidian42-brat:BRAT": false,
       "pkmer:Open Pkmer Market": false,
-      "i18n:I18N": false
+      "i18n:I18N": false,
+      "obsidian-git:打开Git源代码管理": false
     }
   },
-  "floating": {
-    "id": "bbf096c797ae3ef7",
-    "type": "floating",
-    "children": [
-      {
-        "id": "30efbae2bac44045",
-        "type": "window",
-        "children": [
-          {
-            "id": "157c87861202731d",
-            "type": "tabs",
-            "children": [
-              {
-                "id": "0c93e3d9535fd103",
-                "type": "leaf",
-                "state": {
-                  "type": "i18n-download-view",
-                  "state": {},
-                  "icon": "i18n_translate",
-                  "title": "下载视图"
-                }
-              }
-            ]
-          }
-        ],
-        "direction": "vertical",
-        "x": 341,
-        "y": 145,
-        "width": 1025,
-        "height": 801,
-        "maximize": false,
-        "zoom": 0
-      }
-    ]
-  },
-  "active": "0c93e3d9535fd103",
+  "active": "db5f0b3ec65f9fbb",
   "lastOpenFiles": [
+    "实训/重要文件.md",
+    "实训/mysql优化.md",
     "kubernetes笔记/部署kubernetes.md",
     "README.en.md",
     "README.md",
     "实训/编写脚本.md",
     "未命名.md",
-    "实训/重要文件.md",
     "实训/三剑客.md",
     "实训/一键安装脚本.md",
     "实训/cobbler语法.md",
@@ -231,7 +197,6 @@
     "文件",
     "实训/部署Rocky-linux9(最小化安装).md",
     "实训/自动部署三台Rockylinux9服务器.md",
-    "实训/自动检测CPU，内存，IO.md",
     "实训/kickstart与Preseed应答文件基础语法.pdf",
     "实训",
     "kubernetes笔记",
