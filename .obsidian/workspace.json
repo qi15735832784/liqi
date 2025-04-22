@@ -160,11 +160,16 @@
       "canvas:新建白板": false,
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
-      "command-palette:打开命令面板": false
+      "command-palette:打开命令面板": false,
+      "obsidian42-brat:BRAT": false,
+      "pkmer:Open Pkmer Market": false,
+      "obsidian-git:Open Git source control": false,
+      "i18n:I18N": false
     }
   },
   "active": "db5f0b3ec65f9fbb",
   "lastOpenFiles": [
+    "文件/项目类型答辩.md",
     "实训/一键安装脚本.md",
     "实训/题.md",
     "实训/三剑客.md",
@@ -191,7 +196,6 @@
     "文件/简历制作.md",
     "文件/架构里面包含什么.md",
     "文件/技术拓展www.md",
-    "文件/服务器介绍.md",
     "文件",
     "实训/kickstart与Preseed应答文件基础语法.pdf",
     "实训",
