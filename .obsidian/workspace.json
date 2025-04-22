@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "实训/mysql优化.md",
+                "file": "实训/项目类型答辩.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "mysql优化"
+              "title": "项目类型答辩"
             }
           }
         ]
@@ -160,25 +160,26 @@
       "canvas:新建白板": false,
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
-      "command-palette:打开命令面板": false,
-      "obsidian42-brat:BRAT": false,
-      "pkmer:Open Pkmer Market": false,
-      "i18n:I18N": false,
-      "obsidian-git:打开Git源代码管理": false
+      "command-palette:打开命令面板": false
     }
   },
   "active": "db5f0b3ec65f9fbb",
   "lastOpenFiles": [
-    "实训/重要文件.md",
+    "实训/一键安装脚本.md",
+    "实训/题.md",
+    "实训/三剑客.md",
+    "实训/部署Rocky-linux9(最小化安装).md",
+    "实训/cobbler语法.md",
+    "实训/复习总结.md",
+    "实训/脚本安装nginx.md",
+    "实训/单机mysql优化.md",
     "实训/mysql优化.md",
+    "实训/重要文件.md",
     "kubernetes笔记/部署kubernetes.md",
     "README.en.md",
     "README.md",
     "实训/编写脚本.md",
     "未命名.md",
-    "实训/三剑客.md",
-    "实训/一键安装脚本.md",
-    "实训/cobbler语法.md",
     "实训/Linux 进程监控与压力测试.md",
     "实训/安装部署Ubuntu22.04服务器.md",
     "自动化/Maven相关内容.md",
@@ -191,12 +192,7 @@
     "文件/架构里面包含什么.md",
     "文件/技术拓展www.md",
     "文件/服务器介绍.md",
-    "文件/Devops.md",
-    "文件/人事常见问题.md",
-    "文件/10道题.md",
     "文件",
-    "实训/部署Rocky-linux9(最小化安装).md",
-    "实训/自动部署三台Rockylinux9服务器.md",
     "实训/kickstart与Preseed应答文件基础语法.pdf",
     "实训",
     "kubernetes笔记",
