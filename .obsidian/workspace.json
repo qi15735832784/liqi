@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "docker",
+                "query": "tag:#正则简答题",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -167,7 +167,7 @@
       "i18n:I18N": false
     }
   },
-  "active": "db5f0b3ec65f9fbb",
+  "active": "12fad823e3081e65",
   "lastOpenFiles": [
     "实训/项目类型答辩.md",
     "文件/项目类型答辩.md",
